@@ -6,8 +6,7 @@
 
 [中文](https://github.com/nukc/StateView/blob/master/README-zh.md)
 
-StateView is a lightweight view that absorb characteristics of ViewStub. It can occupy less memory that the initia state is not visible and does not occupy the position of the layout. When the operation show empty / retry / loading view,
-it will be added to the layout.
+StateView is an invisible, zero-sized View that can be used to lazily inflate loadingView/emptyView/retryView at runtime.
 
 <img src="https://raw.githubusercontent.com/nukc/stateview/master/art/custom.gif">
 
@@ -16,7 +15,7 @@ it will be added to the layout.
 add the dependency to your build.gradle:
 
 ```groovy
-   compile 'com.github.nukc.stateview:library:1.1.0'
+   compile 'com.github.nukc.stateview:library:1.2.1'
 ```
 
 ##Usage
@@ -34,6 +33,7 @@ Can be directly used in java.
 ```
 
 ```java
+    // if view is not ViewGroup, StateView will be inject to view.getPatent()
     mStateView = StateView.inject(View view);
 
     mStateView = StateView.inject(View view, boolean hasActionBar);
@@ -101,7 +101,7 @@ setLoadingResource(@LayoutRes int loadingResource)
 
     The MIT License (MIT)
 
-    Copyright (c) 2016 Nukc
+    Copyright (c) 2016, 2017 Nukc
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal

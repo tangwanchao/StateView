@@ -7,6 +7,9 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
+import android.support.v4.view.NestedScrollingChild;
+import android.support.v4.view.NestedScrollingParent;
+import android.support.v4.view.ScrollingView;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
@@ -84,10 +87,12 @@ public class StateView extends View {
     public static StateView inject(@NonNull ViewGroup parent, boolean hasActionBar) {
         // 因为 LinearLayout/ScrollView/AdapterView 的特性
         // 为了 StateView 能正常显示，自动再套一层（开发的时候就不用额外的工作量了）
+        // SwipeRefreshLayout/NestedScrollView
         int screenHeight = 0;
         if (parent instanceof LinearLayout ||
                 parent instanceof ScrollView ||
-                parent instanceof AdapterView) {
+                parent instanceof AdapterView ||
+                (parent instanceof NestedScrollingParent && parent instanceof NestedScrollingChild)) {
             ViewParent viewParent = parent.getParent();
             if (viewParent == null) {
                 // create a new FrameLayout to wrap StateView and parent's childView
@@ -108,10 +113,10 @@ public class StateView extends View {
                         wrapLayout.addView(childView);
                     }
                     wrapper.addView(wrapLayout);
-                } else if (parent instanceof ScrollView) {
-                    // not recommended to inject scrollview
+                } else if (parent instanceof ScrollView || parent instanceof ScrollingView) {
+                    // not recommended to inject Scrollview/NestedScrollView
                     if (parent.getChildCount() != 1) {
-                        throw new IllegalStateException("the scrollView does not have one direct child");
+                        throw new IllegalStateException("the ScrollView does not have one direct child");
                     }
                     View directView = parent.getChildAt(0);
                     parent.removeView(directView);
@@ -122,6 +127,16 @@ public class StateView extends View {
                     DisplayMetrics metrics = new DisplayMetrics();
                     wm.getDefaultDisplay().getMetrics(metrics);
                     screenHeight = metrics.heightPixels;
+                } else if (parent instanceof NestedScrollingParent &&
+                        parent instanceof NestedScrollingChild) {
+                    if (parent.getChildCount() == 2) {
+                        View targetView = parent.getChildAt(1);
+                        parent.removeView(targetView);
+                        wrapper.addView(targetView);
+                    } else if (parent.getChildCount() > 2){
+                        throw new IllegalStateException("the view is not refresh layout? view = "
+                                + parent.toString());
+                    }
                 } else {
                     throw new IllegalStateException("the view does not have parent, view = "
                             + parent.toString());
@@ -171,12 +186,7 @@ public class StateView extends View {
      * @return StateView
      */
     public static StateView inject(@NonNull View view) {
-        if (view instanceof ViewGroup) {
-            ViewGroup parent = (ViewGroup) view;
-            return inject(parent);
-        } else {
-            throw new ClassCastException("view must be ViewGroup");
-        }
+        return inject(view, false);
     }
 
     /**
@@ -191,7 +201,12 @@ public class StateView extends View {
             ViewGroup parent = (ViewGroup) view;
             return inject(parent, hasActionBar);
         } else {
-            throw new ClassCastException("view must be ViewGroup");
+            ViewParent parent = view.getParent();
+            if (parent instanceof ViewGroup) {
+                return inject((ViewGroup) parent, hasActionBar);
+            } else {
+                throw new ClassCastException("view or view.getParent() must be ViewGroup");
+            }
         }
     }
 
@@ -228,6 +243,9 @@ public class StateView extends View {
         } else {
             mLayoutParams = new RelativeLayout.LayoutParams(context, attrs);
         }
+
+        setVisibility(GONE);
+        setWillNotDraw(true);
     }
 
     @Override

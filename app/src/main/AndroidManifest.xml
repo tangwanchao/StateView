@@ -21,6 +21,8 @@
             android:name=".FragmentActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity android:name=".CustomActivity" />
+        <activity android:name=".RefreshActivity" />
+        <activity android:name=".InjectViewActivity"></activity>
     </application>
 
 </manifest>

@@ -33,4 +33,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Custom View"/>
+
+    <Button
+        android:id="@+id/btn_refresh_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Inject Refresh View"/>
+
+    <Button
+        android:id="@+id/btn_inject_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Inject View"/>
 </LinearLayout>

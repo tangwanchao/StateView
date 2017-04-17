@@ -13,19 +13,19 @@ StateView 一个轻量级的控件, 继承自 `View`, 吸收了 `ViewStub` 的�
 
 
 ```groovy
-   compile 'com.github.nukc.stateview:library:1.1.0'
+   compile 'com.github.nukc.stateview:library:1.2.1'
 ```
 
 ## 使用方法
 
 直接在代码中使用:
 
-- 注入到Activity
+- 注入到 Activity
 ```java
     mStateView = StateView.inject(Activity activity);
 ```
 
-- 注入到ViewGroup
+- 注入到 ViewGroup
 ```java
     mStateView = StateView.inject(ViewGroup parent);
 
@@ -33,6 +33,7 @@ StateView 一个轻量级的控件, 继承自 `View`, 吸收了 `ViewStub` 的�
 ```
 
 ```java
+    // 如果 View 不是 ViewGroup，则会注入到 View 的 parent 中
     mStateView = StateView.inject(View view);
 
     mStateView = StateView.inject(View view, boolean hasActionBar);
@@ -96,6 +97,10 @@ setLoadingResource(@LayoutRes int loadingResource)
 
 ## ChangeLog
 
+#### Version 1.2.1
+修改 inject 方法，如果使用 ```StateView.inject(View view)``` 传入的 view 不是 ViewGroup，则会尝试注入到 view 的父容器中，
+另外增加判断 ViewGroup 是 SwipeRefreshLayout/NestedScrollView 的情况。
+
 #### Version 1.1.0
 fix [issues #6](https://github.com/nukc/StateView/issues/6)
 
@@ -157,7 +162,7 @@ inject(ViewGroup parent),用于添加到ViewGroup中
 
     The MIT License (MIT)
 
-    Copyright (c) 2016,2017 Nukc
+    Copyright (c) 2016, 2017 Nukc
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
