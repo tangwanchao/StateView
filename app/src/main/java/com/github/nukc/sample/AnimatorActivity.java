@@ -19,6 +19,7 @@ public class AnimatorActivity extends AppCompatActivity {
         setContentView(R.layout.activity_animator);
 
         mStateView = (StateView) findViewById(R.id.stateView);
+        mStateView.setEmptyResource(R.layout.view_empty);
         setBtn();
     }
 

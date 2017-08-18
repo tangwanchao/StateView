@@ -9,11 +9,14 @@
 StateView 一个轻量级的控件, 继承自 `View`, 吸收了 `ViewStub` 的一些特性, 初始状态下是不可见的, 不占布局位置, 占用内存少。
 当进行操作显示空/重试/加载视图后, 该视图才会被添加到布局中。
 
-<img src="https://raw.githubusercontent.com/nukc/stateview/master/art/custom.gif">
+<img src="https://raw.githubusercontent.com/nukc/stateview/master/art/custom.gif"><img width="200"><img src="https://raw.githubusercontent.com/nukc/stateview/master/art/animations.gif">
 
 
 ```groovy
-   compile 'com.github.nukc.stateview:library:1.2.1'
+   compile 'com.github.nukc.stateview:library:1.3.0'
+
+   // animator providers
+   compile 'com.github.nukc.stateview:animations:1.0'
 ```
 
 ## 使用方法
@@ -75,12 +78,13 @@ StateView 一个轻量级的控件, 继承自 `View`, 吸收了 `ViewStub` 的�
 - 单页面设置:layout名字不一样, 然后再代码设置.
 
 ```java
-setEmptyResource(@LayoutRes int emptyResource)
+    setEmptyResource(@LayoutRes int emptyResource)
 
-setRetryResource(@LayoutRes int retryResource)
+    setRetryResource(@LayoutRes int retryResource)
 
-setLoadingResource(@LayoutRes int loadingResource)
+    setLoadingResource(@LayoutRes int loadingResource)
 ```
+
 
 
 ## Custom Attribute
@@ -94,6 +98,63 @@ setLoadingResource(@LayoutRes int loadingResource)
     </declare-styleable>
 </resources>
 ```
+
+
+## 动画切换
+
+设置视图切换动画:
+
+```java
+    // 默认 provider 是 null，即默认不提供动画切换
+    // 如果需要，设置一个就可以了
+    setAnimatorProvider(AnimatorProvider provider)
+
+```
+
+动画效果可以自定义，也可以直接使用 animations 这个库，与主库分离，这样不需要的就可以只依赖 library。
+
+```groovy
+compile 'com.github.nukc.stateview:animations:1.0'
+
+```
+
+目前提供了如下几个动画效果:
+
+- 渐变缩放: ```FadeScaleAnimatorProvider```
+- 卡片翻转: ```FlipAnimatorProvider```
+- 左右滑动: ```SlideAnimatorProvider```
+
+
+自定义的话，直接实现 ```AnimatorProvider```接口并提供 ```Animator``` 就可以了
+
+```java
+public class FadeScaleAnimatorProvider implements AnimatorProvider {
+
+    @Override
+    public Animator showAnimation() {
+        AnimatorSet set = new AnimatorSet();
+        set.playTogether(
+                ObjectAnimator.ofFloat(null, "alpha", 0f, 1f),
+                ObjectAnimator.ofFloat(null, "scaleX", 0.1f, 1f),
+                ObjectAnimator.ofFloat(null, "scaleY", 0.1f, 1f)
+        );
+        return set;
+    }
+
+    @Override
+    public Animator hideAnimation() {
+        AnimatorSet set = new AnimatorSet();
+        set.playTogether(
+                ObjectAnimator.ofFloat(null, "alpha", 1f, 0f),
+                ObjectAnimator.ofFloat(null, "scaleX", 1f, 0.1f),
+                ObjectAnimator.ofFloat(null, "scaleY", 1f, 0.1f)
+        );
+        return set;
+    }
+}
+
+```
+
 
 ## ChangeLog
 

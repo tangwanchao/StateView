@@ -8,14 +8,17 @@
 
 StateView is an invisible, zero-sized View that can be used to lazily inflate loadingView/emptyView/retryView at runtime.
 
-<img src="https://raw.githubusercontent.com/nukc/stateview/master/art/custom.gif">
+<img src="https://raw.githubusercontent.com/nukc/stateview/master/art/custom.gif"><img width="200"><img src="https://raw.githubusercontent.com/nukc/stateview/master/art/animations.gif">
 
 ## Installation
 
 add the dependency to your build.gradle:
 
 ```groovy
-   compile 'com.github.nukc.stateview:library:1.2.1'
+   compile 'com.github.nukc.stateview:library:1.3.0'
+
+   // animator providers
+      compile 'com.github.nukc.stateview:animations:1.0'
 ```
 
 ##Usage
@@ -94,6 +97,61 @@ setLoadingResource(@LayoutRes int loadingResource)
         <attr name="loadingResource" format="reference" />
     </declare-styleable>
 </resources>
+```
+
+## Animation
+
+set:
+
+```java
+    // provider default is null, no animation
+    // if need, set a AnimatorProvider
+    setAnimatorProvider(AnimatorProvider provider)
+
+```
+
+animation can custom, can also compile ```animations```
+
+```groovy
+compile 'com.github.nukc.stateview:animations:1.0'
+
+```
+
+```animations``` library has:
+
+- ```FadeScaleAnimatorProvider```
+- ```FlipAnimatorProvider```
+- ```SlideAnimatorProvider```
+
+
+if want a custom animation，implements ```AnimatorProvider```
+
+```java
+public class FadeScaleAnimatorProvider implements AnimatorProvider {
+
+    @Override
+    public Animator showAnimation() {
+        AnimatorSet set = new AnimatorSet();
+        set.playTogether(
+                ObjectAnimator.ofFloat(null, "alpha", 0f, 1f),
+                ObjectAnimator.ofFloat(null, "scaleX", 0.1f, 1f),
+                ObjectAnimator.ofFloat(null, "scaleY", 0.1f, 1f)
+        );
+        return set;
+    }
+
+    @Override
+    public Animator hideAnimation() {
+        AnimatorSet set = new AnimatorSet();
+        set.playTogether(
+                ObjectAnimator.ofFloat(null, "alpha", 1f, 0f),
+                ObjectAnimator.ofFloat(null, "scaleX", 1f, 0.1f),
+                ObjectAnimator.ofFloat(null, "scaleY", 1f, 0.1f)
+        );
+        return set;
+    }
+}
+
 ```
 
 

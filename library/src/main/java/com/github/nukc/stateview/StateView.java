@@ -373,6 +373,10 @@ public class StateView extends View {
         animator.start();
     }
 
+    /**
+     * provider default is null
+     * @param provider {@link AnimatorProvider}
+     */
     public void setAnimatorProvider(AnimatorProvider provider) {
         this.mProvider = provider;
         reset(mEmptyView);
@@ -381,7 +385,8 @@ public class StateView extends View {
     }
 
     /**
-     * 重置 View 的状态，不然多次 setAnimatorProvider 后会出现问题
+     * reset view's property
+     * 不然多次 setAnimatorProvider 后会视图动画会混乱
      */
     private void reset(View view) {
         if (view != null) {
