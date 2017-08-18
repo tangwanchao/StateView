@@ -7,6 +7,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.github.nukc.stateview.StateView;
+import com.github.nukc.stateview.animations.SlideAnimatorProvider;
 
 public class InjectActivity extends AppCompatActivity {
 
@@ -20,7 +21,7 @@ public class InjectActivity extends AppCompatActivity {
         setContentView(R.layout.activity_inject);
 
         mStateView = StateView.inject(this);
-
+        mStateView.setAnimatorProvider(new SlideAnimatorProvider(mStateView));
         mStateView.setOnRetryClickListener(new StateView.OnRetryClickListener() {
             @Override
             public void onRetryClick() {

@@ -45,4 +45,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Inject View"/>
+
+    <Button
+        android:id="@+id/btn_animation_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Animation View"/>
 </LinearLayout>

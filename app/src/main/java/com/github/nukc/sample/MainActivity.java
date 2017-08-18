@@ -53,5 +53,12 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, InjectViewActivity.class));
             }
         });
+
+        findViewById(R.id.btn_animation_view).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, AnimatorActivity.class));
+            }
+        });
     }
 }

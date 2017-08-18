@@ -22,7 +22,8 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity android:name=".CustomActivity" />
         <activity android:name=".RefreshActivity" />
-        <activity android:name=".InjectViewActivity"></activity>
+        <activity android:name=".InjectViewActivity" />
+        <activity android:name=".AnimatorActivity"></activity>
     </application>
 
 </manifest>

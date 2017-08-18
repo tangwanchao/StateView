@@ -1,5 +1,7 @@
 package com.github.nukc.stateview;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -26,7 +28,7 @@ import android.widget.ScrollView;
 
 /**
  * @author Nukc
- * https://github.com/nukc
+ *         https://github.com/nukc
  */
 public class StateView extends View {
 
@@ -42,6 +44,7 @@ public class StateView extends View {
     private OnRetryClickListener mRetryClickListener;
 
     private RelativeLayout.LayoutParams mLayoutParams;
+    private AnimatorProvider mProvider = null;
 
     /**
      * 注入到activity中
@@ -56,7 +59,7 @@ public class StateView extends View {
     /**
      * 注入到activity中
      *
-     * @param activity Activity
+     * @param activity     Activity
      * @param hasActionBar 是否有actionbar/toolbar
      * @return StateView
      */
@@ -78,7 +81,7 @@ public class StateView extends View {
     /**
      * 注入到ViewGroup中
      *
-     * @param parent extends ViewGroup
+     * @param parent       extends ViewGroup
      * @param hasActionBar 是否有actionbar/toolbar,
      *                     true: 会setMargin top, margin大小是actionbarSize
      *                     false: not set
@@ -133,7 +136,7 @@ public class StateView extends View {
                         View targetView = parent.getChildAt(1);
                         parent.removeView(targetView);
                         wrapper.addView(targetView);
-                    } else if (parent.getChildCount() > 2){
+                    } else if (parent.getChildCount() > 2) {
                         throw new IllegalStateException("the view is not refresh layout? view = "
                                 + parent.toString());
                     }
@@ -192,7 +195,7 @@ public class StateView extends View {
     /**
      * 注入到View中
      *
-     * @param view instanceof ViewGroup
+     * @param view         instanceof ViewGroup
      * @param hasActionBar 是否有actionbar/toolbar
      * @return StateView
      */
@@ -227,10 +230,10 @@ public class StateView extends View {
         mLoadingResource = a.getResourceId(R.styleable.StateView_loadingResource, 0);
         a.recycle();
 
-        if (mEmptyResource == 0){
+        if (mEmptyResource == 0) {
             mEmptyResource = R.layout.base_empty;
         }
-        if (mRetryResource == 0){
+        if (mRetryResource == 0) {
             mRetryResource = R.layout.base_retry;
         }
         if (mLoadingResource == 0) {
@@ -269,17 +272,21 @@ public class StateView extends View {
         setVisibility(mLoadingView, visibility);
     }
 
-    private void setVisibility(View view, int visibility){
-        if (view != null) {
-            view.setVisibility(visibility);
+    private void setVisibility(View view, int visibility) {
+        if (view != null && visibility != view.getVisibility()) {
+            if (mProvider != null) {
+                startAnimation(view);
+            } else {
+                view.setVisibility(visibility);
+            }
         }
     }
 
-    public void showContent(){
-       setVisibility(GONE);
+    public void showContent() {
+        setVisibility(GONE);
     }
 
-    public View showEmpty(){
+    public View showEmpty() {
         if (mEmptyView == null) {
             mEmptyView = inflate(mEmptyResource);
         }
@@ -288,13 +295,13 @@ public class StateView extends View {
         return mEmptyView;
     }
 
-    public View showRetry(){
+    public View showRetry() {
         if (mRetryView == null) {
             mRetryView = inflate(mRetryResource);
             mRetryView.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (mRetryClickListener != null){
+                    if (mRetryClickListener != null) {
                         showLoading();
                         mRetryView.postDelayed(new Runnable() {
                             @Override
@@ -311,7 +318,7 @@ public class StateView extends View {
         return mRetryView;
     }
 
-    public View showLoading(){
+    public View showLoading() {
         if (mLoadingView == null) {
             mLoadingView = inflate(mLoadingResource);
         }
@@ -320,17 +327,70 @@ public class StateView extends View {
         return mLoadingView;
     }
 
-    private void showView(View view){
+    private void showView(View view) {
         setVisibility(view, VISIBLE);
-        if (mEmptyView == view){
+        hideViews(view);
+    }
+
+    private void hideViews(View showView) {
+        if (mEmptyView == showView) {
             setVisibility(mLoadingView, GONE);
             setVisibility(mRetryView, GONE);
-        }else if (mLoadingView == view){
+        } else if (mLoadingView == showView) {
             setVisibility(mEmptyView, GONE);
             setVisibility(mRetryView, GONE);
-        }else {
+        } else {
             setVisibility(mEmptyView, GONE);
             setVisibility(mLoadingView, GONE);
+        }
+    }
+
+    private void startAnimation(final View view) {
+        final boolean toShow = view.getVisibility() == GONE;
+        Animator animator = toShow ? mProvider.showAnimation() : mProvider.hideAnimation();
+        if (animator == null) {
+            view.setVisibility(toShow ? VISIBLE : GONE);
+            return;
+        }
+        animator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                if (!toShow) {
+                    view.setVisibility(GONE);
+                }
+            }
+
+            @Override
+            public void onAnimationStart(Animator animation) {
+                super.onAnimationStart(animation);
+                if (toShow) {
+                    view.setVisibility(VISIBLE);
+                }
+            }
+        });
+        animator.setTarget(view);
+        animator.start();
+    }
+
+    public void setAnimatorProvider(AnimatorProvider provider) {
+        this.mProvider = provider;
+        reset(mEmptyView);
+        reset(mLoadingView);
+        reset(mRetryView);
+    }
+
+    /**
+     * 重置 View 的状态，不然多次 setAnimatorProvider 后会出现问题
+     */
+    private void reset(View view) {
+        if (view != null) {
+            view.setTranslationX(0f);
+            view.setTranslationY(0f);
+            view.setAlpha(1f);
+            view.setRotation(0f);
+            view.setScaleX(1f);
+            view.setScaleY(1f);
         }
     }
 
@@ -351,6 +411,8 @@ public class StateView extends View {
                 final int index = parent.indexOfChild(this);
                 // 防止还能触摸底下的 View
                 view.setClickable(true);
+                // 先不显示
+                view.setVisibility(GONE);
 
                 final ViewGroup.LayoutParams layoutParams = getLayoutParams();
                 if (layoutParams != null) {
@@ -360,14 +422,14 @@ public class StateView extends View {
                                 lp.rightMargin, lp.bottomMargin);
 
                         parent.addView(view, index, mLayoutParams);
-                    }else {
+                    } else {
                         parent.addView(view, index, layoutParams);
                     }
                 } else {
                     parent.addView(view, index);
                 }
 
-                if (mLoadingView != null && mRetryView != null && mEmptyView != null){
+                if (mLoadingView != null && mRetryView != null && mEmptyView != null) {
                     parent.removeViewInLayout(this);
                 }
 
@@ -402,6 +464,7 @@ public class StateView extends View {
 
     /**
      * 设置emptyView的自定义Layout
+     *
      * @param emptyResource emptyView的layoutResource
      */
     public void setEmptyResource(@LayoutRes int emptyResource) {
@@ -410,6 +473,7 @@ public class StateView extends View {
 
     /**
      * 设置retryView的自定义Layout
+     *
      * @param retryResource retryView的layoutResource
      */
     public void setRetryResource(@LayoutRes int retryResource) {
@@ -418,6 +482,7 @@ public class StateView extends View {
 
     /**
      * 设置loadingView的自定义Layout
+     *
      * @param loadingResource loadingView的layoutResource
      */
     public void setLoadingResource(@LayoutRes int loadingResource) {
@@ -434,13 +499,14 @@ public class StateView extends View {
 
     /**
      * 监听重试
+     *
      * @param listener {@link OnRetryClickListener}
      */
-    public void setOnRetryClickListener(OnRetryClickListener listener){
+    public void setOnRetryClickListener(OnRetryClickListener listener) {
         this.mRetryClickListener = listener;
     }
 
-    public interface OnRetryClickListener{
+    public interface OnRetryClickListener {
         void onRetryClick();
     }
 }
