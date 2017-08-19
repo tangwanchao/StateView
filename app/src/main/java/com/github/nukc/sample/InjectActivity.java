@@ -21,7 +21,7 @@ public class InjectActivity extends AppCompatActivity {
         setContentView(R.layout.activity_inject);
 
         mStateView = StateView.inject(this);
-        mStateView.setAnimatorProvider(new SlideAnimatorProvider(mStateView));
+        mStateView.setAnimatorProvider(new SlideAnimatorProvider());
         mStateView.setOnRetryClickListener(new StateView.OnRetryClickListener() {
             @Override
             public void onRetryClick() {

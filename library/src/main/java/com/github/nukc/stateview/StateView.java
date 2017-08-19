@@ -347,7 +347,7 @@ public class StateView extends View {
 
     private void startAnimation(final View view) {
         final boolean toShow = view.getVisibility() == GONE;
-        Animator animator = toShow ? mProvider.showAnimation() : mProvider.hideAnimation();
+        Animator animator = toShow ? mProvider.showAnimation(view) : mProvider.hideAnimation(view);
         if (animator == null) {
             view.setVisibility(toShow ? VISIBLE : GONE);
             return;
@@ -369,7 +369,6 @@ public class StateView extends View {
                 }
             }
         });
-        animator.setTarget(view);
         animator.start();
     }
 

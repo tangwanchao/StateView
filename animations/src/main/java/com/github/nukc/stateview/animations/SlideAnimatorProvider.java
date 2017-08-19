@@ -17,36 +17,30 @@ import com.github.nukc.stateview.StateView;
 
 public class SlideAnimatorProvider implements AnimatorProvider {
 
-    private StateView mStateView;
-
-    public SlideAnimatorProvider(StateView view) {
-        mStateView = view;
-    }
-
     @Override
-    public Animator showAnimation() {
+    public Animator showAnimation(View view) {
         AnimatorSet set = new AnimatorSet();
         set.playTogether(
-                ObjectAnimator.ofFloat(null, "alpha", 0, 1),
-                ObjectAnimator.ofFloat(null, "translationX", getDistance(), 0)
+                ObjectAnimator.ofFloat(view, "alpha", 0, 1),
+                ObjectAnimator.ofFloat(view, "translationX", getDistance(view), 0)
         );
         set.setInterpolator(new AccelerateInterpolator());
         return set;
     }
 
     @Override
-    public Animator hideAnimation() {
+    public Animator hideAnimation(View view) {
         AnimatorSet set = new AnimatorSet();
         set.playTogether(
-                ObjectAnimator.ofFloat(null, "alpha", 1, 0),
-                ObjectAnimator.ofFloat(null, "translationX", 0, getDistance())
+                ObjectAnimator.ofFloat(view, "alpha", 1, 0),
+                ObjectAnimator.ofFloat(view, "translationX", 0, getDistance(view))
         );
         set.setInterpolator(new DecelerateInterpolator());
         return set;
     }
 
-    private float getDistance() {
-        ViewParent viewParent = mStateView.getParent();
+    private float getDistance(View view) {
+        ViewParent viewParent = view.getParent();
         if (viewParent == null) {
             return 0f;
         } else {

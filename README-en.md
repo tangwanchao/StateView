@@ -15,10 +15,10 @@ StateView is an invisible, zero-sized View that can be used to lazily inflate lo
 add the dependency to your build.gradle:
 
 ```groovy
-   compile 'com.github.nukc.stateview:library:1.3.0'
+   compile 'com.github.nukc.stateview:library:1.3.1'
 
    // animator providers
-      compile 'com.github.nukc.stateview:animations:1.0'
+   compile 'com.github.nukc.stateview:animations:1.0.1'
 ```
 
 ##Usage
@@ -113,7 +113,7 @@ set:
 animation can custom, can also compile ```animations```
 
 ```groovy
-compile 'com.github.nukc.stateview:animations:1.0'
+    compile 'com.github.nukc.stateview:animations:1.0.1'
 
 ```
 
@@ -130,23 +130,23 @@ if want a custom animation，implements ```AnimatorProvider```
 public class FadeScaleAnimatorProvider implements AnimatorProvider {
 
     @Override
-    public Animator showAnimation() {
+    public Animator showAnimation(View view) {
         AnimatorSet set = new AnimatorSet();
         set.playTogether(
-                ObjectAnimator.ofFloat(null, "alpha", 0f, 1f),
-                ObjectAnimator.ofFloat(null, "scaleX", 0.1f, 1f),
-                ObjectAnimator.ofFloat(null, "scaleY", 0.1f, 1f)
+                ObjectAnimator.ofFloat(view, "alpha", 0f, 1f),
+                ObjectAnimator.ofFloat(view, "scaleX", 0.1f, 1f),
+                ObjectAnimator.ofFloat(view, "scaleY", 0.1f, 1f)
         );
         return set;
     }
 
     @Override
-    public Animator hideAnimation() {
+    public Animator hideAnimation(View view) {
         AnimatorSet set = new AnimatorSet();
         set.playTogether(
-                ObjectAnimator.ofFloat(null, "alpha", 1f, 0f),
-                ObjectAnimator.ofFloat(null, "scaleX", 1f, 0.1f),
-                ObjectAnimator.ofFloat(null, "scaleY", 1f, 0.1f)
+                ObjectAnimator.ofFloat(view, "alpha", 1f, 0f),
+                ObjectAnimator.ofFloat(view, "scaleX", 1f, 0.1f),
+                ObjectAnimator.ofFloat(view, "scaleY", 1f, 0.1f)
         );
         return set;
     }

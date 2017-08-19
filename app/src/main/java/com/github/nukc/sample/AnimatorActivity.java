@@ -43,7 +43,7 @@ public class AnimatorActivity extends AppCompatActivity {
         findViewById(R.id.btnSlide).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mStateView.setAnimatorProvider(new SlideAnimatorProvider(mStateView));
+                mStateView.setAnimatorProvider(new SlideAnimatorProvider());
                 showAnimationView();
             }
         });

@@ -13,10 +13,10 @@ StateView 一个轻量级的控件, 继承自 `View`, 吸收了 `ViewStub` 的�
 
 
 ```groovy
-   compile 'com.github.nukc.stateview:library:1.3.0'
+   compile 'com.github.nukc.stateview:library:1.3.1'
 
    // animator providers
-   compile 'com.github.nukc.stateview:animations:1.0'
+   compile 'com.github.nukc.stateview:animations:1.0.1'
 ```
 
 ## 使用方法
@@ -114,7 +114,7 @@ StateView 一个轻量级的控件, 继承自 `View`, 吸收了 `ViewStub` 的�
 动画效果可以自定义，也可以直接使用 animations 这个库，与主库分离，这样不需要的就可以只依赖 library。
 
 ```groovy
-compile 'com.github.nukc.stateview:animations:1.0'
+    compile 'com.github.nukc.stateview:animations:1.0.1'
 
 ```
 
@@ -131,23 +131,23 @@ compile 'com.github.nukc.stateview:animations:1.0'
 public class FadeScaleAnimatorProvider implements AnimatorProvider {
 
     @Override
-    public Animator showAnimation() {
+    public Animator showAnimation(View view) {
         AnimatorSet set = new AnimatorSet();
         set.playTogether(
-                ObjectAnimator.ofFloat(null, "alpha", 0f, 1f),
-                ObjectAnimator.ofFloat(null, "scaleX", 0.1f, 1f),
-                ObjectAnimator.ofFloat(null, "scaleY", 0.1f, 1f)
+                ObjectAnimator.ofFloat(view, "alpha", 0f, 1f),
+                ObjectAnimator.ofFloat(view, "scaleX", 0.1f, 1f),
+                ObjectAnimator.ofFloat(view, "scaleY", 0.1f, 1f)
         );
         return set;
     }
 
     @Override
-    public Animator hideAnimation() {
+    public Animator hideAnimation(View view) {
         AnimatorSet set = new AnimatorSet();
         set.playTogether(
-                ObjectAnimator.ofFloat(null, "alpha", 1f, 0f),
-                ObjectAnimator.ofFloat(null, "scaleX", 1f, 0.1f),
-                ObjectAnimator.ofFloat(null, "scaleY", 1f, 0.1f)
+                ObjectAnimator.ofFloat(view, "alpha", 1f, 0f),
+                ObjectAnimator.ofFloat(view, "scaleX", 1f, 0.1f),
+                ObjectAnimator.ofFloat(view, "scaleY", 1f, 0.1f)
         );
         return set;
     }
@@ -157,6 +157,12 @@ public class FadeScaleAnimatorProvider implements AnimatorProvider {
 
 
 ## ChangeLog
+
+#### Version 1.3.1
+更改 ```AnimatorProvider``` 接口，让动画效果的自由度更高
+
+#### Version 1.3.0
+增加支持视图动画切换效果，另增加一个动画效果提供库 ```animations```
 
 #### Version 1.2.1
 修改 inject 方法，如果使用 ```StateView.inject(View view)``` 传入的 view 不是 ViewGroup，则会尝试注入到 view 的父容器中，

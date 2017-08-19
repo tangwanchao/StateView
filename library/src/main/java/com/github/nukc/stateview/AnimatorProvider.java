@@ -1,6 +1,7 @@
 package com.github.nukc.stateview;
 
 import android.animation.Animator;
+import android.view.View;
 
 /**
  * @author Nukc.
@@ -8,7 +9,7 @@ import android.animation.Animator;
 
 public interface AnimatorProvider {
 
-    Animator showAnimation();
+    Animator showAnimation(View view);
 
-    Animator hideAnimation();
+    Animator hideAnimation(View view);
 }
