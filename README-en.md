@@ -15,7 +15,7 @@ StateView is an invisible, zero-sized View that can be used to lazily inflate lo
 add the dependency to your build.gradle:
 
 ```groovy
-   compile 'com.github.nukc.stateview:library:1.3.1'
+   compile 'com.github.nukc.stateview:library:1.3.2'
 
    // animator providers
    compile 'com.github.nukc.stateview:animations:1.0.1'
@@ -85,6 +85,8 @@ setRetryResource(@LayoutRes int retryResource)
 
 setLoadingResource(@LayoutRes int loadingResource)
 ```
+
+use setOnInflateListener to set message, like AnimatorActivity.java#L28
 
 
 ## Custom Attribute

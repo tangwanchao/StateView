@@ -1,5 +1,10 @@
 language: android
 
+# This job ran on our Trusty environment, which is gradually becoming our default Linux environment.
+# Read all about this in our blog: Trusty as a default Linux is coming and take note that
+# you can add dist: precise in your .travis.yml file to continue using Precise.
+dist: precise
+
 jdk:
   - oraclejdk8
 

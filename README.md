@@ -13,7 +13,7 @@ StateView 一个轻量级的控件, 继承自 `View`, 吸收了 `ViewStub` 的�
 
 
 ```groovy
-   compile 'com.github.nukc.stateview:library:1.3.1'
+   compile 'com.github.nukc.stateview:library:1.3.2'
 
    // animator providers
    compile 'com.github.nukc.stateview:animations:1.0.1'
@@ -85,6 +85,26 @@ StateView 一个轻量级的控件, 继承自 `View`, 吸收了 `ViewStub` 的�
     setLoadingResource(@LayoutRes int loadingResource)
 ```
 
+利用 ```OnInflateListener``` 设置文本图像或者其它操作：
+在 view 成功添加到 parent 的时候回调（每个 viewType 只回调一次）
+
+```
+    mStateView.setOnInflateListener(new StateView.OnInflateListener() {
+        @Override
+        public void onInflate(@StateView.ViewType int viewType, View view) {
+            if (viewType == StateView.EMPTY) {
+                // set text or other
+                ViewGroup emptyView = (ViewGroup) view;
+                TextView tvMessage = (TextView) emptyView.findViewById(R.id.tv_message);
+                ImageView ivState = (ImageView) emptyView.findViewById(R.id.iv_state);
+                tvMessage.setText("custom message");
+                ivState.setImageResource(R.drawable.retry);
+            } else if (viewType == StateView.RETRY) {
+                // ...
+            }
+        }
+    });
+```
 
 
 ## Custom Attribute
@@ -157,6 +177,10 @@ public class FadeScaleAnimatorProvider implements AnimatorProvider {
 
 
 ## ChangeLog
+
+#### Version 1.3.2
+增加 ```OnInflateListener```，在 view 成功添加到 parent 的时候回调（每个 viewType 只回调一次），
+可在回调中对 View 进行操作设置，比如设置文本图像等。
 
 #### Version 1.3.1
 更改 ```AnimatorProvider``` 接口，让动画效果的自由度更高
