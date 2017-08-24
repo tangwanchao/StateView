@@ -88,7 +88,7 @@ StateView 一个轻量级的控件, 继承自 `View`, 吸收了 `ViewStub` 的�
 利用 ```OnInflateListener``` 设置文本图像或者其它操作：
 在 view 成功添加到 parent 的时候回调（每个 viewType 只回调一次）
 
-```
+```java
     mStateView.setOnInflateListener(new StateView.OnInflateListener() {
         @Override
         public void onInflate(@StateView.ViewType int viewType, View view) {
