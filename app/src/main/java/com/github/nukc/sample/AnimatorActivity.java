@@ -1,8 +1,11 @@
 package com.github.nukc.sample;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.github.nukc.stateview.StateView;
 import com.github.nukc.stateview.animations.FadeScaleAnimatorProvider;
@@ -21,6 +24,20 @@ public class AnimatorActivity extends AppCompatActivity {
         mStateView = (StateView) findViewById(R.id.stateView);
         mStateView.setEmptyResource(R.layout.view_empty);
         setBtn();
+
+        mStateView.setOnInflateListener(new StateView.OnInflateListener() {
+            @Override
+            public void onInflate(@StateView.ViewType int viewType, View view) {
+                if (viewType == StateView.EMPTY) {
+                    // set text or other
+                    ViewGroup emptyView = (ViewGroup) view;
+                    TextView tvMessage = (TextView) emptyView.findViewById(R.id.tv_message);
+                    ImageView ivState = (ImageView) emptyView.findViewById(R.id.iv_state);
+                    tvMessage.setText("custom message");
+                    ivState.setImageResource(R.drawable.retry);
+                }
+            }
+        });
     }
 
     private void setBtn() {

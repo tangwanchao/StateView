@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.support.annotation.IntDef;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.v4.view.NestedScrollingChild;
@@ -26,11 +27,26 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 /**
+ * StateView is an invisible, zero-sized View that can be used
+ * to lazily inflate loadingView/emptyView/retryView at runtime.
+ *
  * @author Nukc
  *         https://github.com/nukc
  */
 public class StateView extends View {
+
+    @IntDef({EMPTY, RETRY, LOADING})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface ViewType {
+    }
+
+    public static final int EMPTY = 0x00000000;
+    public static final int RETRY = 0x00000001;
+    public static final int LOADING = 0x00000002;
 
     private int mEmptyResource;
     private int mRetryResource;
@@ -42,12 +58,13 @@ public class StateView extends View {
 
     private LayoutInflater mInflater;
     private OnRetryClickListener mRetryClickListener;
+    private OnInflateListener mInflateListener;
 
     private RelativeLayout.LayoutParams mLayoutParams;
     private AnimatorProvider mProvider = null;
 
     /**
-     * 注入到activity中
+     * 注入到 activity 中
      *
      * @param activity Activity
      * @return StateView
@@ -57,10 +74,10 @@ public class StateView extends View {
     }
 
     /**
-     * 注入到activity中
+     * 注入到 activity 中
      *
      * @param activity     Activity
-     * @param hasActionBar 是否有actionbar/toolbar
+     * @param hasActionBar 是否有 actionbar/toolbar
      * @return StateView
      */
     public static StateView inject(@NonNull Activity activity, boolean hasActionBar) {
@@ -69,7 +86,7 @@ public class StateView extends View {
     }
 
     /**
-     * 注入到ViewGroup中
+     * 注入到 ViewGroup 中
      *
      * @param parent extends ViewGroup
      * @return StateView
@@ -79,11 +96,11 @@ public class StateView extends View {
     }
 
     /**
-     * 注入到ViewGroup中
+     * 注入到 ViewGroup 中
      *
      * @param parent       extends ViewGroup
-     * @param hasActionBar 是否有actionbar/toolbar,
-     *                     true: 会setMargin top, margin大小是actionbarSize
+     * @param hasActionBar 是否有 actionbar/toolbar,
+     *                     true: 会 setMargin top, margin 大小是 actionbarSize
      *                     false: not set
      * @return StateView
      */
@@ -183,7 +200,7 @@ public class StateView extends View {
     }
 
     /**
-     * 注入到View中
+     * 注入到 View 中
      *
      * @param view instanceof ViewGroup
      * @return StateView
@@ -193,10 +210,10 @@ public class StateView extends View {
     }
 
     /**
-     * 注入到View中
+     * 注入到 View 中
      *
      * @param view         instanceof ViewGroup
-     * @param hasActionBar 是否有actionbar/toolbar
+     * @param hasActionBar 是否有 actionbar/toolbar
      * @return StateView
      */
     public static StateView inject(@NonNull View view, boolean hasActionBar) {
@@ -288,7 +305,7 @@ public class StateView extends View {
 
     public View showEmpty() {
         if (mEmptyView == null) {
-            mEmptyView = inflate(mEmptyResource);
+            mEmptyView = inflate(mEmptyResource, EMPTY);
         }
 
         showView(mEmptyView);
@@ -297,7 +314,7 @@ public class StateView extends View {
 
     public View showRetry() {
         if (mRetryView == null) {
-            mRetryView = inflate(mRetryResource);
+            mRetryView = inflate(mRetryResource, RETRY);
             mRetryView.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -320,18 +337,24 @@ public class StateView extends View {
 
     public View showLoading() {
         if (mLoadingView == null) {
-            mLoadingView = inflate(mLoadingResource);
+            mLoadingView = inflate(mLoadingResource, LOADING);
         }
 
         showView(mLoadingView);
         return mLoadingView;
     }
 
+    /**
+     * show the state view
+     */
     private void showView(View view) {
         setVisibility(view, VISIBLE);
         hideViews(view);
     }
 
+    /**
+     * hide other views after show view
+     */
     private void hideViews(View showView) {
         if (mEmptyView == showView) {
             setVisibility(mLoadingView, GONE);
@@ -374,6 +397,7 @@ public class StateView extends View {
 
     /**
      * provider default is null
+     *
      * @param provider {@link AnimatorProvider}
      */
     public void setAnimatorProvider(AnimatorProvider provider) {
@@ -385,7 +409,7 @@ public class StateView extends View {
 
     /**
      * reset view's property
-     * 不然多次 setAnimatorProvider 后会视图动画会混乱
+     * 不然多次 setAnimatorProvider 后视图动画会混乱
      */
     private void reset(View view) {
         if (view != null) {
@@ -398,7 +422,7 @@ public class StateView extends View {
         }
     }
 
-    public View inflate(@LayoutRes int layoutResource) {
+    private View inflate(@LayoutRes int layoutResource, @ViewType int viewType) {
         final ViewParent viewParent = getParent();
 
         if (viewParent != null && viewParent instanceof ViewGroup) {
@@ -437,6 +461,10 @@ public class StateView extends View {
                     parent.removeViewInLayout(this);
                 }
 
+                if (mInflateListener != null) {
+                    mInflateListener.onInflate(viewType, view);
+                }
+
                 return view;
             } else {
                 throw new IllegalArgumentException("StateView must have a valid layoutResource");
@@ -447,7 +475,7 @@ public class StateView extends View {
     }
 
     /**
-     * 设置topMargin, 当有actionbar/toolbar的时候
+     * 设置 topMargin, 当有 actionbar/toolbar 的时候
      */
     public void setTopMargin() {
         ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) getLayoutParams();
@@ -467,36 +495,43 @@ public class StateView extends View {
     }
 
     /**
-     * 设置emptyView的自定义Layout
+     * 设置 emptyView 的自定义 Layout
      *
-     * @param emptyResource emptyView的layoutResource
+     * @param emptyResource emptyView 的 layoutResource
      */
     public void setEmptyResource(@LayoutRes int emptyResource) {
         this.mEmptyResource = emptyResource;
     }
 
     /**
-     * 设置retryView的自定义Layout
+     * 设置 retryView 的自定义 Layout
      *
-     * @param retryResource retryView的layoutResource
+     * @param retryResource retryView 的 layoutResource
      */
     public void setRetryResource(@LayoutRes int retryResource) {
         this.mRetryResource = retryResource;
     }
 
     /**
-     * 设置loadingView的自定义Layout
+     * 设置 loadingView 的自定义 Layout
      *
-     * @param loadingResource loadingView的layoutResource
+     * @param loadingResource loadingView 的 layoutResource
      */
     public void setLoadingResource(@LayoutRes int loadingResource) {
         mLoadingResource = loadingResource;
     }
 
+    /**
+     * Get current {@link LayoutInflater} used in {@link #inflate(int, int)}.
+     */
     public LayoutInflater getInflater() {
         return mInflater;
     }
 
+    /**
+     * Set {@link LayoutInflater} to use in {@link #inflate(int, int)}, or {@code null}
+     * to use the default.
+     */
     public void setInflater(LayoutInflater inflater) {
         this.mInflater = inflater;
     }
@@ -510,7 +545,34 @@ public class StateView extends View {
         this.mRetryClickListener = listener;
     }
 
+    /**
+     * Listener used to receive a notification after the RetryView is clicked.
+     */
     public interface OnRetryClickListener {
         void onRetryClick();
+    }
+
+    /**
+     * Specifies the inflate listener to be notified after this StateView successfully
+     * inflated its layout resource.
+     *
+     * @param inflateListener The OnInflateListener to notify of successful inflation.
+     * @see OnInflateListener
+     */
+    public void setOnInflateListener(OnInflateListener inflateListener) {
+        mInflateListener = inflateListener;
+    }
+
+    /**
+     * Listener used to receive a notification after a StateView has successfully
+     * inflated its layout resource.
+     *
+     * @see StateView#setOnInflateListener(OnInflateListener)
+     */
+    public interface OnInflateListener {
+        /**
+         * @param view The inflated View.
+         */
+        void onInflate(@ViewType int viewType, View view);
     }
 }
