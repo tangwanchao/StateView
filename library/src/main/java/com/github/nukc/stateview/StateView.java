@@ -112,6 +112,7 @@ public class StateView extends View {
         if (parent instanceof LinearLayout ||
                 parent instanceof ScrollView ||
                 parent instanceof AdapterView ||
+                (parent instanceof ScrollingView && parent instanceof NestedScrollingChild) ||
                 (parent instanceof NestedScrollingParent && parent instanceof NestedScrollingChild)) {
             ViewParent viewParent = parent.getParent();
             if (viewParent == null) {
