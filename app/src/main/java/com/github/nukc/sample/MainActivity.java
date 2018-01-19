@@ -67,5 +67,12 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, InjectRvActivity.class));
             }
         });
+
+        findViewById(R.id.btn_drawer_layout).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, DrawerLayoutActivity.class));
+            }
+        });
     }
 }

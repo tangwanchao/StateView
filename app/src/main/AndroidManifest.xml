@@ -24,7 +24,11 @@
         <activity android:name=".RefreshActivity" />
         <activity android:name=".InjectViewActivity" />
         <activity android:name=".AnimatorActivity" />
-        <activity android:name=".InjectRvActivity"></activity>
+        <activity android:name=".InjectRvActivity" />
+        <activity
+            android:name=".DrawerLayoutActivity"
+            android:label="@string/title_activity_drawer_layout"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

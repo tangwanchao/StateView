@@ -26,6 +26,7 @@ public class InjectActivity extends AppCompatActivity {
             @Override
             public void onRetryClick() {
                 //do something
+                mStateView.showRetry();
             }
         });
     }

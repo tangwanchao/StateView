@@ -108,6 +108,7 @@ public class StateView extends View {
         // 因为 LinearLayout/ScrollView/AdapterView 的特性
         // 为了 StateView 能正常显示，自动再套一层（开发的时候就不用额外的工作量了）
         // SwipeRefreshLayout/NestedScrollView
+        // If there are other complex needs, maybe you can use stateView in layout(.xml)
         int screenHeight = 0;
         if (parent instanceof LinearLayout ||
                 parent instanceof ScrollView ||
@@ -197,6 +198,9 @@ public class StateView extends View {
         if (hasActionBar) {
             stateView.setTopMargin();
         }
+        // to be as big as its parent
+        stateView.getLayoutParams().width = ViewGroup.LayoutParams.MATCH_PARENT;
+        stateView.getLayoutParams().height = ViewGroup.LayoutParams.MATCH_PARENT;
         return stateView;
     }
 
@@ -326,7 +330,7 @@ public class StateView extends View {
                             public void run() {
                                 mRetryClickListener.onRetryClick();
                             }
-                        }, 200);
+                        }, 400);
                     }
                 }
             });
