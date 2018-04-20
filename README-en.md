@@ -15,7 +15,7 @@ StateView is an invisible, zero-sized View that can be used to lazily inflate lo
 add the dependency to your build.gradle:
 
 ```groovy
-   compile 'com.github.nukc.stateview:library:1.3.4'
+   compile 'com.github.nukc.stateview:library:1.5.0'
 
    // animator providers
    compile 'com.github.nukc.stateview:animations:1.0.1'
@@ -42,6 +42,9 @@ Can be directly used in java.
     mStateView = StateView.inject(View view, boolean hasActionBar);
 ```
 
+```java
+    mStateView = StateView.wrap(View view);
+```
 
 Or include the StateView widget in your layout.
 

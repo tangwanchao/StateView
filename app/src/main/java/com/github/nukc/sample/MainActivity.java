@@ -74,5 +74,12 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, DrawerLayoutActivity.class));
             }
         });
+
+        findViewById(R.id.btn_wrap_view).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, WrapActivity.class));
+            }
+        });
     }
 }

@@ -235,6 +235,22 @@ public class StateView extends View {
         }
     }
 
+    /**
+     * 包裹 view
+     * @param view target view
+     * @return StateView
+     */
+    public static StateView wrap(@NonNull View view) {
+        ViewGroup parent = (ViewGroup) view.getParent();
+        parent.removeView(view);
+        FrameLayout wrap = new FrameLayout(view.getContext());
+        wrap.addView(view);
+        StateView stateView = new StateView(view.getContext());
+        wrap.addView(stateView, view.getLayoutParams());
+        parent.addView(wrap);
+        return stateView;
+    }
+
     public StateView(Context context) {
         this(context, null);
     }

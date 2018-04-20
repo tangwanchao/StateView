@@ -29,6 +29,7 @@
             android:name=".DrawerLayoutActivity"
             android:label="@string/title_activity_drawer_layout"
             android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity android:name=".WrapActivity" />
     </application>
 
 </manifest>

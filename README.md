@@ -13,7 +13,7 @@ StateView 一个轻量级的控件, 继承自 `View`, 吸收了 `ViewStub` 的�
 
 
 ```groovy
-   compile 'com.github.nukc.stateview:library:1.3.4'
+   compile 'com.github.nukc.stateview:library:1.5.0'
 
    // animator providers
    compile 'com.github.nukc.stateview:animations:1.0.1'
@@ -40,6 +40,11 @@ StateView 一个轻量级的控件, 继承自 `View`, 吸收了 `ViewStub` 的�
     mStateView = StateView.inject(View view);
 
     mStateView = StateView.inject(View view, boolean hasActionBar);
+```
+
+- 包裹指定的 View，这个会增加层次
+```java
+    mStateView = StateView.wrap(View view);
 ```
 
 或添加到布局:
