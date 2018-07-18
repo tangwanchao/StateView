@@ -10,6 +10,7 @@ import android.graphics.Canvas;
 import android.support.annotation.IntDef;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.view.NestedScrollingChild;
 import android.support.v4.view.NestedScrollingParent;
 import android.support.v4.view.ScrollingView;
@@ -60,7 +61,8 @@ public class StateView extends View {
     private OnRetryClickListener mRetryClickListener;
     private OnInflateListener mInflateListener;
 
-    private RelativeLayout.LayoutParams mLayoutParams;
+    private RelativeLayout.LayoutParams mLayoutParamsRelative;
+    private ConstraintLayout.LayoutParams mLayoutParamsConstrain;
     private AnimatorProvider mProvider = null;
 
     /**
@@ -237,6 +239,7 @@ public class StateView extends View {
 
     /**
      * 包裹 view
+     *
      * @param view target view
      * @return StateView
      */
@@ -279,10 +282,13 @@ public class StateView extends View {
         }
 
         if (attrs == null) {
-            mLayoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+            mLayoutParamsRelative = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT);
+            mLayoutParamsConstrain = new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT);
         } else {
-            mLayoutParams = new RelativeLayout.LayoutParams(context, attrs);
+            mLayoutParamsRelative = new RelativeLayout.LayoutParams(context, attrs);
+            mLayoutParamsConstrain = new ConstraintLayout.LayoutParams(getContext(), attrs);
         }
 
         setVisibility(GONE);
@@ -467,10 +473,12 @@ public class StateView extends View {
                 if (layoutParams != null) {
                     if (parent instanceof RelativeLayout) {
                         ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) layoutParams;
-                        mLayoutParams.setMargins(lp.leftMargin, lp.topMargin,
+                        mLayoutParamsRelative.setMargins(lp.leftMargin, lp.topMargin,
                                 lp.rightMargin, lp.bottomMargin);
 
-                        parent.addView(view, index, mLayoutParams);
+                        parent.addView(view, index, mLayoutParamsRelative);
+                    } else if (parent instanceof ConstraintLayout) {
+                        parent.addView(view, index, mLayoutParamsConstrain);
                     } else {
                         parent.addView(view, index, layoutParams);
                     }
