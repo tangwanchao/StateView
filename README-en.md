@@ -15,7 +15,7 @@ StateView is an invisible, zero-sized View that can be used to lazily inflate lo
 add the dependency to your build.gradle:
 
 ```groovy
-   compile 'com.github.nukc.stateview:library:1.5.0'
+   compile 'com.github.nukc.stateview:library:1.5.1'
 
    // animator providers
    compile 'com.github.nukc.stateview:animations:1.0.1'
@@ -164,7 +164,7 @@ public class FadeScaleAnimatorProvider implements AnimatorProvider {
 
     The MIT License (MIT)
 
-    Copyright (c) 2016, 2017 Nukc
+    Copyright (c) 2016 Nukc
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal

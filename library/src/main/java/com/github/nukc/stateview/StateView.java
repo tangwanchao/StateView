@@ -288,7 +288,7 @@ public class StateView extends View {
                     ViewGroup.LayoutParams.MATCH_PARENT);
         } else {
             mLayoutParamsRelative = new RelativeLayout.LayoutParams(context, attrs);
-            mLayoutParamsConstrain = new ConstraintLayout.LayoutParams(getContext(), attrs);
+            mLayoutParamsConstrain = new ConstraintLayout.LayoutParams(context, attrs);
         }
 
         setVisibility(GONE);

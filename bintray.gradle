@@ -5,7 +5,7 @@ def siteUrl = 'https://github.com/nukc/StateView'      // 项目的主页
 def gitUrl = 'https://github.com/nukc/StateView.git'   // Git仓库的url
 
 group = "com.github.nukc.stateview"
-version = "1.5.0"
+version = "1.5.1"
 
 install {
     repositories.mavenInstaller {
