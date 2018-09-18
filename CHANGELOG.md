@@ -1,5 +1,8 @@
 ## ChangeLog
 
+#### Version 1.5.3
+fix #15 when parent.getParent() is ConstraintLayout
+
 #### Version 1.5.0
 Supported wrap view
 

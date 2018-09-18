@@ -172,9 +172,6 @@ public class StateView extends View {
             } else {
                 FrameLayout root = new FrameLayout(parent.getContext());
                 root.setLayoutParams(parent.getLayoutParams());
-                ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-                parent.setLayoutParams(layoutParams);
 
                 if (viewParent instanceof ViewGroup) {
                     ViewGroup rootGroup = (ViewGroup) viewParent;
@@ -183,6 +180,13 @@ public class StateView extends View {
                     // 然后替换成新的
                     rootGroup.addView(root);
                 }
+
+                // if viewParent is ConstraintLayout, setLayoutParams must after rootGroup.removeView(parent);
+                // @see at at android.support.constraint.ConstraintLayout.getViewWidget
+                // @see at android.support.constraint.ConstraintLayout.onViewRemoved
+                ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                parent.setLayoutParams(layoutParams);
                 root.addView(parent);
                 parent = root;
             }
