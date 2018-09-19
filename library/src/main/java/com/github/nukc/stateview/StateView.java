@@ -36,7 +36,7 @@ import java.lang.annotation.RetentionPolicy;
  * to lazily inflate loadingView/emptyView/retryView at runtime.
  *
  * @author Nukc
- *         https://github.com/nukc
+ * https://github.com/nukc
  */
 public class StateView extends View {
 
@@ -179,10 +179,12 @@ public class StateView extends View {
                     rootGroup.removeView(parent);
                     // 然后替换成新的
                     rootGroup.addView(root);
+
+                    Injector.changeChildrenConstraints(rootGroup, root, parent.getId());
                 }
 
                 // if viewParent is ConstraintLayout, setLayoutParams must after rootGroup.removeView(parent);
-                // @see at at android.support.constraint.ConstraintLayout.getViewWidget
+                // @see at android.support.constraint.ConstraintLayout.getViewWidget
                 // @see at android.support.constraint.ConstraintLayout.onViewRemoved
                 ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(
                         ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);

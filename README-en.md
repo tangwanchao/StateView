@@ -15,7 +15,7 @@ StateView is an invisible, zero-sized View that can be used to lazily inflate lo
 add the dependency to your build.gradle:
 
 ```groovy
-   compile 'com.github.nukc.stateview:library:1.5.3'
+   compile 'com.github.nukc.stateview:library:1.5.4'
 
    // animator providers
    compile 'com.github.nukc.stateview:animations:1.0.1'

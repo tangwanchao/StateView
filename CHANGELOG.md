@@ -1,5 +1,10 @@
 ## ChangeLog
 
+#### Version
+Solve the ClassCastException: constraint-layout version 1.1.3
+When viewParent is ConstraintLayout
+Change other view's Constraint to root, if the origin Constraint is parent
+
 #### Version 1.5.3
 fix #15 when parent.getParent() is ConstraintLayout
 
