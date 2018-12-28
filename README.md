@@ -47,7 +47,7 @@ StateView 一个轻量级的控件, 继承自 `View`, 吸收了 `ViewStub` 的�
     mStateView = StateView.wrap(View view);
 ```
 
-或添加到布局:
+或添加到布局（这种方式可以更灵活）:
 
 ```xml
 
@@ -179,6 +179,28 @@ public class FadeScaleAnimatorProvider implements AnimatorProvider {
 }
 
 ```
+
+#### 兼容沉浸式全屏模式
+
+> 对于是沉浸式全屏模式下的，可以使用此方法补上 statusBar 的 height，从而不覆盖 toolbar
+```java
+
+/**
+ * @return statusBarHeight
+ */
+private int getStatusBarHeight() {
+    int height = 0;
+    int resId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+    if (resId > 0) {
+        height = getResources().getDimensionPixelSize(resId);
+    }
+    return height;
+}
+
+ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) mStateView.getLayoutParams();
+layoutParams.topMargin += getStatusBarHeight()
+```
+
 
 
 ## ChangeLog
