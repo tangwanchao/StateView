@@ -32,14 +32,14 @@ StateView 一个轻量级的控件, 继承自 `View`, 吸收了 `ViewStub` 的�
     mStateView = StateView.inject(Activity activity);
 ```
 
+- 注入到 View
+```java
+    mStateView = StateView.inject(View view);
+```
+
 - 注入到 ViewGroup
 ```java
     mStateView = StateView.inject(ViewGroup parent);
-```
-
-```java
-    // 如果 View 不是 ViewGroup，则会注入到 View 的 parent 中
-    mStateView = StateView.inject(View view);
 ```
 
 或添加到布局（这种方式可以更灵活）:

@@ -34,12 +34,11 @@ Can be directly used in java.
 ```
 
 ```java
-    mStateView = StateView.inject(ViewGroup parent);
+    mStateView = StateView.inject(View view);
 ```
 
 ```java
-    // if view is not ViewGroup, StateView will be inject to view.getPatent()
-    mStateView = StateView.inject(View view);
+    mStateView = StateView.inject(ViewGroup parent);
 ```
 
 Or include the StateView widget in your layout.
