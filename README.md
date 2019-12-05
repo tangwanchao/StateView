@@ -42,11 +42,6 @@ StateView 一个轻量级的控件, 继承自 `View`, 吸收了 `ViewStub` 的�
     mStateView = StateView.inject(View view);
 ```
 
-- 包裹指定的 View，这个会增加层次
-```java
-    mStateView = StateView.wrap(View view);
-```
-
 或添加到布局（这种方式可以更灵活）:
 
 ```xml

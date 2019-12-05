@@ -42,10 +42,6 @@ Can be directly used in java.
     mStateView = StateView.inject(View view);
 ```
 
-```java
-    mStateView = StateView.wrap(View view);
-```
-
 Or include the StateView widget in your layout.
 
 ```xml
