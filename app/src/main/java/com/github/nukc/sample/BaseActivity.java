@@ -1,14 +1,16 @@
 package com.github.nukc.sample;
 
 import android.os.Bundle;
-import android.support.annotation.LayoutRes;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
+import androidx.annotation.LayoutRes;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.github.nukc.stateview.AnimatorProvider;
 import com.github.nukc.stateview.StateView;
 
 /**
@@ -36,6 +38,12 @@ public abstract class BaseActivity extends AppCompatActivity{
     protected abstract @LayoutRes int setContentView();
 
     protected abstract View injectTarget();
+
+    protected void setAnimator(AnimatorProvider animator) {
+        if (mStateView != null) {
+            mStateView.setAnimatorProvider(animator);
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

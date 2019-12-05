@@ -8,6 +8,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".RelativeActivity"></activity>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -30,7 +31,7 @@
             android:label="@string/title_activity_drawer_layout"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".WrapActivity" />
-        <activity android:name=".ConstraintLayoutActivity"></activity>
+        <activity android:name=".ConstraintLayoutActivity" />
     </application>
 
 </manifest>

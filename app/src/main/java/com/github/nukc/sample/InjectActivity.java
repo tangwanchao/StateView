@@ -1,10 +1,11 @@
 package com.github.nukc.sample;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.nukc.stateview.StateView;
 import com.github.nukc.stateview.animations.SlideAnimatorProvider;

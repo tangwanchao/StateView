@@ -1,11 +1,12 @@
 package com.github.nukc.sample;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.nukc.stateview.StateView;
 import com.github.nukc.stateview.animations.FadeScaleAnimatorProvider;
@@ -31,8 +32,8 @@ public class AnimatorActivity extends AppCompatActivity {
                 if (viewType == StateView.EMPTY) {
                     // set text or other
                     ViewGroup emptyView = (ViewGroup) view;
-                    TextView tvMessage = (TextView) emptyView.findViewById(R.id.tv_message);
-                    ImageView ivState = (ImageView) emptyView.findViewById(R.id.iv_state);
+                    TextView tvMessage = emptyView.findViewById(R.id.tv_message);
+                    ImageView ivState = emptyView.findViewById(R.id.iv_state);
                     tvMessage.setText("custom message");
                     ivState.setImageResource(R.drawable.retry);
                 }

@@ -13,10 +13,14 @@ StateView 一个轻量级的控件, 继承自 `View`, 吸收了 `ViewStub` 的�
 
 
 ```groovy
+   // andoridx, kotlin version, recommend
+   implementation 'com.github.nukc.stateview:kotlin:2.0'
+
+   // support library, java version
    compile 'com.github.nukc.stateview:library:1.5.4'
 
    // animator providers
-   compile 'com.github.nukc.stateview:animations:1.0.1'
+   compile 'com.github.nukc.stateview:animations:1.0.2'
 ```
 
 ## 使用方法
@@ -31,15 +35,11 @@ StateView 一个轻量级的控件, 继承自 `View`, 吸收了 `ViewStub` 的�
 - 注入到 ViewGroup
 ```java
     mStateView = StateView.inject(ViewGroup parent);
-
-    mStateView = StateView.inject(ViewGroup parent, boolean hasActionBar);
 ```
 
 ```java
     // 如果 View 不是 ViewGroup，则会注入到 View 的 parent 中
     mStateView = StateView.inject(View view);
-
-    mStateView = StateView.inject(View view, boolean hasActionBar);
 ```
 
 - 包裹指定的 View，这个会增加层次

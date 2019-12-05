@@ -2,12 +2,13 @@ package com.github.nukc.sample;
 
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
 
 import com.github.nukc.stateview.StateView;
 
@@ -48,7 +49,8 @@ public class InjectFragment extends Fragment {
             }
         });
 
-        mStateView = StateView.inject(view, true);
+//        mStateView = StateView.inject(view, true);
+        mStateView = StateView.inject(view);
 
         mStateView.setOnRetryClickListener(new StateView.OnRetryClickListener() {
             @Override

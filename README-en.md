@@ -15,10 +15,14 @@ StateView is an invisible, zero-sized View that can be used to lazily inflate lo
 add the dependency to your build.gradle:
 
 ```groovy
+   // andoridx, kotlin version, recommend
+   implementation 'com.github.nukc.stateview:kotlin:2.0'
+
+   // support library, java version
    compile 'com.github.nukc.stateview:library:1.5.4'
 
    // animator providers
-   compile 'com.github.nukc.stateview:animations:1.0.1'
+   compile 'com.github.nukc.stateview:animations:1.0.2'
 ```
 
 ##Usage
@@ -31,15 +35,11 @@ Can be directly used in java.
 
 ```java
     mStateView = StateView.inject(ViewGroup parent);
-
-    mStateView = StateView.inject(ViewGroup parent, boolean hasActionBar);
 ```
 
 ```java
     // if view is not ViewGroup, StateView will be inject to view.getPatent()
     mStateView = StateView.inject(View view);
-
-    mStateView = StateView.inject(View view, boolean hasActionBar);
 ```
 
 ```java
