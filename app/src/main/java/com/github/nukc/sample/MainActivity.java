@@ -96,5 +96,12 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, RelativeActivity.class));
             }
         });
+
+        findViewById(R.id.btn_coordinator_layout).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, CoordinatorLayoutActivity.class));
+            }
+        });
     }
 }
