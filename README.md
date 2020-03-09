@@ -1,7 +1,7 @@
 # StateView
 
 [![Build Status](https://travis-ci.org/nukc/StateView.svg?branch=master)](https://travis-ci.org/nukc/StateView)
-[![Download](https://api.bintray.com/packages/nukc/maven/StateView/images/download.svg) ](https://bintray.com/nukc/maven/StateView/_latestVersion)
+[![Download](https://api.bintray.com/packages/nukc/maven/StateView-Kt/images/download.svg) ](https://bintray.com/nukc/maven/StateView-Kt/_latestVersion)
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-StateView-green.svg?style=true)](https://android-arsenal.com/details/1/4255)
 
 [English](https://github.com/nukc/StateView/blob/master/README-en.md)
@@ -14,7 +14,7 @@ StateView 一个轻量级的控件, 继承自 `View`, 吸收了 `ViewStub` 的�
 
 ```groovy
    // andoridx, kotlin version, recommend
-   implementation 'com.github.nukc.stateview:kotlin:2.0.1'
+   implementation 'com.github.nukc.stateview:kotlin:2.0.2'
 
    // support library, java version
    compile 'com.github.nukc.stateview:library:1.5.4'

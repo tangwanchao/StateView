@@ -37,7 +37,7 @@ internal object Injector {
         if (parent is LinearLayout) {
             // create a new LinearLayout to wrap parent's childView
             val wrapLayout = LinearLayout(parent.context)
-            wrapLayout.layoutParams = parent.layoutParams
+            wrapLayout.layoutParams = parent.layoutParams ?: layoutParams
             wrapLayout.orientation = parent.orientation
             var i = 0
             val childCount: Int = parent.getChildCount()
@@ -53,18 +53,17 @@ internal object Injector {
             if (parent.childCount != 1) {
                 throw IllegalStateException("the ScrollView does not have one direct child")
             }
-            val directView: View = parent.getChildAt(0)
+            val directView = parent.getChildAt(0)
             parent.removeView(directView)
             wrapper.addView(directView)
-            val wm = parent.context
-                    .getSystemService(Context.WINDOW_SERVICE) as WindowManager
+            val wm = parent.context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
             val metrics = DisplayMetrics()
             wm.defaultDisplay.getMetrics(metrics)
             screenHeight = metrics.heightPixels
         } else if (parent is NestedScrollingParent &&
                 parent is NestedScrollingChild) {
             if (parent.childCount == 2) {
-                val targetView: View = parent.getChildAt(1)
+                val targetView = parent.getChildAt(1)
                 parent.removeView(targetView)
                 wrapper.addView(targetView)
             } else if (parent.childCount > 2) {

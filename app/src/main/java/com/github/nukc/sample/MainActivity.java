@@ -103,5 +103,12 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, CoordinatorLayoutActivity.class));
             }
         });
+
+        findViewById(R.id.btn_view_pager2).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, ViewPager2Activity.class));
+            }
+        });
     }
 }

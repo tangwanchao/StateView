@@ -49,8 +49,9 @@ public class InjectFragment extends Fragment {
             }
         });
 
-//        mStateView = StateView.inject(view, true);
         mStateView = StateView.inject(view);
+        ((ViewGroup.MarginLayoutParams) mStateView.getLayoutParams()).topMargin =
+                getResources().getDimensionPixelSize(R.dimen.action_bar_size);
 
         mStateView.setOnRetryClickListener(new StateView.OnRetryClickListener() {
             @Override
