@@ -14,7 +14,7 @@ StateView 一个轻量级的控件, 继承自 `View`, 吸收了 `ViewStub` 的�
 
 ```groovy
    // andoridx, kotlin version, recommend
-   implementation 'com.github.nukc.stateview:kotlin:2.0.2'
+   implementation 'com.github.nukc.stateview:kotlin:2.1'
 
    // support library, java version
    compile 'com.github.nukc.stateview:library:1.5.4'
@@ -83,6 +83,11 @@ StateView 一个轻量级的控件, 继承自 `View`, 吸收了 `ViewStub` 的�
     setRetryResource(@LayoutRes int retryResource)
 
     setLoadingResource(@LayoutRes int loadingResource)
+
+    // v2.1
+    setEmptyView(View view)
+    setRetryView(View view)
+    setLoadingView(View view)
 ```
 
 利用 ```OnInflateListener``` 设置文本图像或者其它操作：

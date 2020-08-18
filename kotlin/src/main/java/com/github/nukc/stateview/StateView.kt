@@ -34,8 +34,20 @@ class StateView : View {
     var loadingResource = 0
 
     var emptyView: View? = null
+        set(value) {
+            setView(EMPTY, value)
+            field = value
+        }
     var retryView: View? = null
+        set(value) {
+            setView(RETRY, value)
+            field = value
+        }
     var loadingView: View? = null
+        set(value) {
+            setView(LOADING, value)
+            field = value
+        }
 
     var inflater: LayoutInflater? = null
     var onRetryClickListener: OnRetryClickListener? = null
@@ -191,7 +203,7 @@ class StateView : View {
 
     /**
      * reset view's property
-     * 不然多次 setAnimatorProvider 后视图动画会混乱
+     * 不然多次设置 [animatorProvider] 后视图动画会混乱
      */
     private fun reset(view: View?) {
         if (view != null) {
@@ -204,55 +216,82 @@ class StateView : View {
         }
     }
 
+    /**
+     * set [view] add to [getParent]
+     */
+    private fun setView(@ViewType viewType: Int, view: View?) {
+        val viewParent = parent
+        if (viewParent is ViewGroup) {
+            // if the view is already in the parent, no operation
+            if (viewParent.indexOfChild(view) > NO_ID) {
+                return
+            }
+            when (viewType) {
+                EMPTY -> emptyView
+                RETRY -> retryView
+                LOADING -> loadingView
+                else -> throw IllegalArgumentException("Invalid viewType: $viewType")
+            }?.let {
+                viewParent.removeViewInLayout(it)
+            }
+
+            view?.let { addToParent(viewType, viewParent, view) }
+        }
+    }
+
     private fun inflate(@LayoutRes layoutResource: Int, @ViewType viewType: Int): View {
         val viewParent = parent
         return if (viewParent != null && viewParent is ViewGroup) {
             if (layoutResource != 0) {
                 val factory: LayoutInflater = inflater ?: LayoutInflater.from(context)
                 val view = factory.inflate(layoutResource, viewParent, false)
-                val index = viewParent.indexOfChild(this)
-                // 防止还能触摸底下的 View
-                view.isClickable = true
-                // 先不显示
-                view.visibility = GONE
-                ViewCompat.setZ(view, ViewCompat.getZ(this))
-                if (layoutParams != null) {
-                    when (viewParent) {
-                        is RelativeLayout -> {
-                            val lp = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                                RelativeLayout.LayoutParams(layoutParams as RelativeLayout.LayoutParams)
-                            } else {
-                                RelativeLayout.LayoutParams(layoutParams)
-                            }
-                            viewParent.addView(view, index, lp)
-                        }
-                        is ConstraintLayout -> {
-                            val source = layoutParams as ConstraintLayout.LayoutParams
-                            val lp = ConstraintLayout.LayoutParams(layoutParams as ViewGroup.LayoutParams)
-                            lp.leftToLeft = source.leftToLeft
-                            lp.rightToRight = source.rightToRight
-                            lp.topToTop = source.topToTop
-                            lp.bottomToBottom = source.bottomToBottom
-                            viewParent.addView(view, index, lp)
-                        }
-                        else -> {
-                            viewParent.addView(view, index, layoutParams)
-                        }
-                    }
-                } else {
-                    viewParent.addView(view, index)
-                }
-                if (loadingView != null && retryView != null && emptyView != null) {
-                    viewParent.removeViewInLayout(this)
-                }
-                onInflateListener?.onInflate(viewType, view)
-                view
+                addToParent(viewType, viewParent, view)
             } else {
                 throw IllegalArgumentException("StateView must have a valid layoutResource")
             }
         } else {
             throw IllegalStateException("StateView must have a non-null ViewGroup viewParent")
         }
+    }
+
+    private fun addToParent(@ViewType viewType: Int, viewParent: ViewGroup, view: View): View {
+        val index = viewParent.indexOfChild(this)
+        // 防止还能触摸底下的 View
+        view.isClickable = true
+        // 先不显示
+        view.visibility = GONE
+        ViewCompat.setZ(view, ViewCompat.getZ(this))
+        if (layoutParams != null) {
+            when (viewParent) {
+                is RelativeLayout -> {
+                    val lp = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                        RelativeLayout.LayoutParams(layoutParams as RelativeLayout.LayoutParams)
+                    } else {
+                        RelativeLayout.LayoutParams(layoutParams)
+                    }
+                    viewParent.addView(view, index, lp)
+                }
+                is ConstraintLayout -> {
+                    val source = layoutParams as ConstraintLayout.LayoutParams
+                    val lp = ConstraintLayout.LayoutParams(layoutParams as ViewGroup.LayoutParams)
+                    lp.leftToLeft = source.leftToLeft
+                    lp.rightToRight = source.rightToRight
+                    lp.topToTop = source.topToTop
+                    lp.bottomToBottom = source.bottomToBottom
+                    viewParent.addView(view, index, lp)
+                }
+                else -> {
+                    viewParent.addView(view, index, layoutParams)
+                }
+            }
+        } else {
+            viewParent.addView(view, index)
+        }
+        if (loadingView != null && retryView != null && emptyView != null) {
+            viewParent.removeViewInLayout(this)
+        }
+        onInflateListener?.onInflate(viewType, view)
+        return view
     }
 
     /**

@@ -16,7 +16,7 @@ add the dependency to your build.gradle:
 
 ```groovy
    // andoridx, kotlin version, recommend
-   implementation 'com.github.nukc.stateview:kotlin:2.0.2'
+   implementation 'com.github.nukc.stateview:kotlin:2.1'
 
    // support library, java version
    compile 'com.github.nukc.stateview:library:1.5.4'
@@ -82,6 +82,11 @@ setEmptyResource(@LayoutRes int emptyResource)
 setRetryResource(@LayoutRes int retryResource)
 
 setLoadingResource(@LayoutRes int loadingResource)
+
+// v2.1
+setEmptyView(View view)
+setRetryView(View view)
+setLoadingView(View view)
 ```
 
 use setOnInflateListener to set message, like AnimatorActivity.java#L28
