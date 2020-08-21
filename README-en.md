@@ -16,7 +16,7 @@ add the dependency to your build.gradle:
 
 ```groovy
    // andoridx, kotlin version, recommend
-   implementation 'com.github.nukc.stateview:kotlin:2.1'
+   implementation 'com.github.nukc.stateview:kotlin:2.1.1'
 
    // support library, java version
    compile 'com.github.nukc.stateview:library:1.5.4'

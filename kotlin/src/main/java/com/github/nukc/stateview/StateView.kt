@@ -14,6 +14,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.annotation.IntDef
 import androidx.annotation.LayoutRes
+import androidx.collection.ArraySet
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.NestedScrollingChild
 import androidx.core.view.NestedScrollingParent
@@ -42,12 +43,15 @@ class StateView : View {
         set(value) {
             setView(RETRY, value)
             field = value
+            setupRetryClickListener()
         }
     var loadingView: View? = null
         set(value) {
             setView(LOADING, value)
             field = value
         }
+
+    private val addSet = ArraySet<@ViewType Int>()
 
     var inflater: LayoutInflater? = null
     var onRetryClickListener: OnRetryClickListener? = null
@@ -116,44 +120,43 @@ class StateView : View {
         visibility = GONE
     }
 
-    fun showEmpty(): View {
-        if (emptyView == null) {
-            emptyView = inflate(emptyResource, EMPTY)
-        }
-        showView(emptyView!!)
-        return emptyView!!
-    }
+    fun showEmpty() = showView(EMPTY)
 
-    fun showRetry(): View {
-        if (retryView == null) {
-            retryView = inflate(retryResource, RETRY)
-            retryView!!.setOnClickListener {
-                if (onRetryClickListener != null) {
-                    showLoading()
-                    retryView!!.postDelayed({
-                        onRetryClickListener?.onRetryClick()
-                    }, 400)
-                }
-            }
-        }
-        showView(retryView!!)
-        return retryView!!
-    }
+    fun showRetry() = showView(RETRY)
 
-    fun showLoading(): View {
-        if (loadingView == null) {
-            loadingView = inflate(loadingResource, LOADING)
-        }
-        showView(loadingView!!)
-        return loadingView!!
-    }
+    fun showLoading() = showView(LOADING)
 
     /**
      * show the state view
      */
-    private fun showView(view: View) {
+    private fun showView(@ViewType viewType: Int): View {
+        var view = when (viewType) {
+            EMPTY -> emptyView
+            RETRY -> retryView
+            LOADING -> loadingView
+            else -> throw IllegalArgumentException("Invalid viewType: $viewType")
+        }
+        // if the view is null, inflate layoutResource
+        if (view == null) {
+            val layoutResource = when (viewType) {
+                EMPTY -> emptyResource
+                RETRY -> retryResource
+                LOADING -> loadingResource
+                else -> NO_ID
+            }
+            view = inflate(layoutResource, viewType)
+            when (viewType) {
+                EMPTY -> emptyView = view
+                RETRY -> retryView = view
+                LOADING -> loadingView = view
+            }
+        } else if (addSet.contains(viewType)) {
+            // if the view not in the parent
+            addToParent(viewType, parent as ViewGroup, view)
+        }
         setVisibility(view, VISIBLE)
         hideViews(view)
+        return view
     }
 
     /**
@@ -217,7 +220,7 @@ class StateView : View {
     }
 
     /**
-     * set [view] add to [getParent]
+     * set [view], add to [getParent] when [showView]
      */
     private fun setView(@ViewType viewType: Int, view: View?) {
         val viewParent = parent
@@ -235,13 +238,13 @@ class StateView : View {
                 viewParent.removeViewInLayout(it)
             }
 
-            view?.let { addToParent(viewType, viewParent, view) }
+            addSet.add(viewType)
         }
     }
 
     private fun inflate(@LayoutRes layoutResource: Int, @ViewType viewType: Int): View {
         val viewParent = parent
-        return if (viewParent != null && viewParent is ViewGroup) {
+        return if (viewParent is ViewGroup) {
             if (layoutResource != 0) {
                 val factory: LayoutInflater = inflater ?: LayoutInflater.from(context)
                 val view = factory.inflate(layoutResource, viewParent, false)
@@ -255,6 +258,8 @@ class StateView : View {
     }
 
     private fun addToParent(@ViewType viewType: Int, viewParent: ViewGroup, view: View): View {
+        addSet.remove(viewType)
+
         val index = viewParent.indexOfChild(this)
         // 防止还能触摸底下的 View
         view.isClickable = true
@@ -292,6 +297,17 @@ class StateView : View {
         }
         onInflateListener?.onInflate(viewType, view)
         return view
+    }
+
+    private fun setupRetryClickListener() {
+        retryView?.setOnClickListener {
+            if (onRetryClickListener != null) {
+                showLoading()
+                retryView!!.postDelayed({
+                    onRetryClickListener?.onRetryClick()
+                }, 400)
+            }
+        }
     }
 
     /**
