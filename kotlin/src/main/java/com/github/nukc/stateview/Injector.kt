@@ -18,6 +18,12 @@ import androidx.core.view.ScrollingView
  */
 internal object Injector {
 
+    val constraintLayoutAvailable = try {
+        null != Class.forName("androidx.constraintlayout.widget.ConstraintLayout")
+    } catch (e: Throwable) {
+        false
+    }
+
     /**
      * Create a new FrameLayout (wrapper), let parent's remove children views, and add to the wrapper,
      * stateVew add to wrapper, wrapper add to parent

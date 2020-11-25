@@ -267,27 +267,23 @@ class StateView : View {
         view.visibility = GONE
         ViewCompat.setZ(view, ViewCompat.getZ(this))
         if (layoutParams != null) {
-            when (viewParent) {
-                is RelativeLayout -> {
-                    val lp = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                        RelativeLayout.LayoutParams(layoutParams as RelativeLayout.LayoutParams)
-                    } else {
-                        RelativeLayout.LayoutParams(layoutParams)
-                    }
-                    viewParent.addView(view, index, lp)
+            if (viewParent is RelativeLayout) {
+                val lp = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    RelativeLayout.LayoutParams(layoutParams as RelativeLayout.LayoutParams)
+                } else {
+                    RelativeLayout.LayoutParams(layoutParams)
                 }
-                is ConstraintLayout -> {
-                    val source = layoutParams as ConstraintLayout.LayoutParams
-                    val lp = ConstraintLayout.LayoutParams(layoutParams as ViewGroup.LayoutParams)
-                    lp.leftToLeft = source.leftToLeft
-                    lp.rightToRight = source.rightToRight
-                    lp.topToTop = source.topToTop
-                    lp.bottomToBottom = source.bottomToBottom
-                    viewParent.addView(view, index, lp)
-                }
-                else -> {
-                    viewParent.addView(view, index, layoutParams)
-                }
+                viewParent.addView(view, index, lp)
+            } else if (Injector.constraintLayoutAvailable && viewParent is ConstraintLayout) {
+                val source = layoutParams as ConstraintLayout.LayoutParams
+                val lp = ConstraintLayout.LayoutParams(layoutParams as ViewGroup.LayoutParams)
+                lp.leftToLeft = source.leftToLeft
+                lp.rightToRight = source.rightToRight
+                lp.topToTop = source.topToTop
+                lp.bottomToBottom = source.bottomToBottom
+                viewParent.addView(view, index, lp)
+            } else {
+                viewParent.addView(view, index, layoutParams)
             }
         } else {
             viewParent.addView(view, index)
@@ -374,7 +370,7 @@ class StateView : View {
         fun wrap(view: View): StateView {
             val parent = view.parent
             if (parent is ViewGroup) {
-                if (parent is ConstraintLayout) {
+                if (Injector.constraintLayoutAvailable && parent is ConstraintLayout) {
                     return Injector.matchViewIfParentIsConstraintLayout(parent, view)
                 }
                 if (parent is RelativeLayout) {

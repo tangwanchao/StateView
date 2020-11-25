@@ -14,7 +14,7 @@ StateView 一个轻量级的控件, 继承自 `View`, 吸收了 `ViewStub` 的�
 
 ```groovy
    // andoridx, kotlin version, recommend
-   implementation 'com.github.nukc.stateview:kotlin:2.1.1'
+   implementation 'com.github.nukc.stateview:kotlin:2.2.0'
 
    // support library, java version
    compile 'com.github.nukc.stateview:library:1.5.4'
