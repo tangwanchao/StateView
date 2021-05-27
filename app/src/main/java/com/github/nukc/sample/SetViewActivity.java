@@ -38,11 +38,13 @@ public class SetViewActivity extends AppCompatActivity {
 		if (tvMessage != null) {
 			tvMessage.setText("Run setEmptyView");
 		}
-		mStateView.setEmptyView(emptyView);
+		mStateView.setView(mStateView.getEmptyResource(), emptyView);
 
-//		View retryView = View.inflate(this, R.layout.view_retry31, null);
-//		mStateView.setRetryView(retryView);
 		mStateView.setRetryResource(R.layout.view_retry31);
+
+		TextView tvCustom = new TextView(this);
+		tvCustom.setText("Custom");
+		mStateView.setView(1, tvCustom);
 	}
 
 	@Override
@@ -65,6 +67,9 @@ public class SetViewActivity extends AppCompatActivity {
 				break;
 			case R.id.show_content:
 				mStateView.showContent();
+				break;
+			case R.id.show_custom:
+				mStateView.show(1);
 				break;
 		}
 		return super.onOptionsItemSelected(item);

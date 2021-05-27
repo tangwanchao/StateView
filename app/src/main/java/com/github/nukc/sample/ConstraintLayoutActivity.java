@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -19,7 +20,7 @@ public class ConstraintLayoutActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_constraint_layout);
 
-        mStateView = StateView.inject(findViewById(R.id.text));
+        mStateView = StateView.inject((TextView)findViewById(R.id.text));
         mStateView.setAnimatorProvider(new SlideAnimatorProvider());
         mStateView.setEmptyResource(R.layout.view_empty);
         mStateView.setRetryResource(R.layout.view_retry);

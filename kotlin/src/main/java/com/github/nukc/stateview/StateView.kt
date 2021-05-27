@@ -8,13 +8,12 @@ import android.content.Context
 import android.graphics.Canvas
 import android.os.Build
 import android.util.AttributeSet
+import android.util.SparseArray
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.annotation.IntDef
 import androidx.annotation.LayoutRes
-import androidx.collection.ArraySet
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.NestedScrollingChild
 import androidx.core.view.NestedScrollingParent
@@ -22,36 +21,25 @@ import androidx.core.view.ScrollingView
 import androidx.core.view.ViewCompat
 
 /**
+ * StateView is an invisible, zero-sized View that can be used
+ * to lazily inflate loadingView/emptyView/retryView/anyView at runtime.
+ *
  * @author Nukc.
  */
-class StateView : View {
+class StateView @JvmOverloads constructor(
+    context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
+) : View(context, attrs, defStyleAttr) {
 
-    @IntDef(EMPTY, RETRY, LOADING)
-    @kotlin.annotation.Retention(AnnotationRetention.SOURCE)
-    annotation class ViewType
+    private val views = SparseArray<View>(3)
 
+    @LayoutRes
     var emptyResource = 0
+
+    @LayoutRes
     var retryResource = 0
+
+    @LayoutRes
     var loadingResource = 0
-
-    var emptyView: View? = null
-        set(value) {
-            setView(EMPTY, value)
-            field = value
-        }
-    var retryView: View? = null
-        set(value) {
-            setView(RETRY, value)
-            field = value
-            setupRetryClickListener()
-        }
-    var loadingView: View? = null
-        set(value) {
-            setView(LOADING, value)
-            field = value
-        }
-
-    private val addSet = ArraySet<@ViewType Int>()
 
     var inflater: LayoutInflater? = null
     var onRetryClickListener: OnRetryClickListener? = null
@@ -60,16 +48,12 @@ class StateView : View {
     var animatorProvider: AnimatorProvider? = null
         set(value) {
             field = value
-            reset(emptyView)
-            reset(loadingView)
-            reset(retryView)
+            for (i in 0 until views.size()) {
+                reset(views.valueAt(i))
+            }
         }
 
-    constructor(context: Context) : this(context, null)
-
-    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
-
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
+    init {
         val a = context.obtainStyledAttributes(attrs, R.styleable.StateView)
         emptyResource = a.getResourceId(R.styleable.StateView_emptyResource, 0)
         retryResource = a.getResourceId(R.styleable.StateView_retryResource, 0)
@@ -101,9 +85,9 @@ class StateView : View {
     override fun dispatchDraw(canvas: Canvas?) {}
 
     override fun setVisibility(visibility: Int) {
-        setVisibility(emptyView, visibility)
-        setVisibility(retryView, visibility)
-        setVisibility(loadingView, visibility)
+        for (i in 0 until views.size()) {
+            setVisibility(views.valueAt(i), visibility)
+        }
     }
 
     private fun setVisibility(view: View?, visibility: Int) {
@@ -116,43 +100,35 @@ class StateView : View {
         }
     }
 
+    fun setView(viewType: Int, view: View) {
+        views.put(viewType, view)
+    }
+
     fun showContent() {
         visibility = GONE
     }
 
-    fun showEmpty() = showView(EMPTY)
+    fun showEmpty() = showView(emptyResource)
 
-    fun showRetry() = showView(RETRY)
+    fun showRetry() = showView(retryResource)
 
-    fun showLoading() = showView(LOADING)
+    fun showLoading() = showView(loadingResource)
+
+    /**
+     * show the viewType view
+     */
+    fun show(viewType: Int) = showView(viewType)
 
     /**
      * show the state view
      */
-    private fun showView(@ViewType viewType: Int): View {
-        var view = when (viewType) {
-            EMPTY -> emptyView
-            RETRY -> retryView
-            LOADING -> loadingView
-            else -> throw IllegalArgumentException("Invalid viewType: $viewType")
-        }
-        // if the view is null, inflate layoutResource
+    private fun showView(@LayoutRes layoutResource: Int): View {
+        var view = views[layoutResource]
         if (view == null) {
-            val layoutResource = when (viewType) {
-                EMPTY -> emptyResource
-                RETRY -> retryResource
-                LOADING -> loadingResource
-                else -> NO_ID
-            }
-            view = inflate(layoutResource, viewType)
-            when (viewType) {
-                EMPTY -> emptyView = view
-                RETRY -> retryView = view
-                LOADING -> loadingView = view
-            }
-        } else if (addSet.contains(viewType)) {
-            // if the view not in the parent
-            addToParent(viewType, parent as ViewGroup, view)
+            view = inflate(layoutResource)
+            views.put(layoutResource, view)
+        } else if ((parent as ViewGroup).indexOfChild(view) == NO_ID) {
+            addToParent(layoutResource, parent as ViewGroup, view)
         }
         setVisibility(view, VISIBLE)
         hideViews(view)
@@ -163,45 +139,38 @@ class StateView : View {
      * hide other views after show view
      */
     private fun hideViews(showView: View) {
-        when {
-            emptyView === showView -> {
-                setVisibility(loadingView, GONE)
-                setVisibility(retryView, GONE)
+        for (i in 0 until views.size()) {
+            val view = views.valueAt(i)
+            if (view == showView) {
+                continue
             }
-            loadingView === showView -> {
-                setVisibility(emptyView, GONE)
-                setVisibility(retryView, GONE)
-            }
-            else -> {
-                setVisibility(emptyView, GONE)
-                setVisibility(loadingView, GONE)
-            }
+            setVisibility(view, GONE)
         }
     }
 
     private fun startAnimation(view: View) {
         val toShow = view.visibility == GONE
-        val animator: Animator? = if (toShow) animatorProvider!!.showAnimation(view) else animatorProvider!!.hideAnimation(view)
-        if (animator == null) {
-            view.visibility = if (toShow) VISIBLE else GONE
-            return
-        }
-        animator.addListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationEnd(animation: Animator) {
-                super.onAnimationEnd(animation)
-                if (!toShow) {
-                    view.visibility = GONE
+        (if (toShow) animatorProvider!!.showAnimation(view)
+        else animatorProvider!!.hideAnimation(view))?.apply {
+            addListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    super.onAnimationEnd(animation)
+                    if (!toShow) {
+                        view.visibility = GONE
+                    }
                 }
-            }
 
-            override fun onAnimationStart(animation: Animator) {
-                super.onAnimationStart(animation)
-                if (toShow) {
-                    view.visibility = VISIBLE
+                override fun onAnimationStart(animation: Animator) {
+                    super.onAnimationStart(animation)
+                    if (toShow) {
+                        view.visibility = VISIBLE
+                    }
                 }
-            }
-        })
-        animator.start()
+            })
+            start()
+        } ?: let {
+            view.visibility = if (toShow) VISIBLE else GONE
+        }
     }
 
     /**
@@ -219,36 +188,13 @@ class StateView : View {
         }
     }
 
-    /**
-     * set [view], add to [getParent] when [showView]
-     */
-    private fun setView(@ViewType viewType: Int, view: View?) {
-        val viewParent = parent
-        if (viewParent is ViewGroup) {
-            // if the view is already in the parent, no operation
-            if (viewParent.indexOfChild(view) > NO_ID) {
-                return
-            }
-            when (viewType) {
-                EMPTY -> emptyView
-                RETRY -> retryView
-                LOADING -> loadingView
-                else -> throw IllegalArgumentException("Invalid viewType: $viewType")
-            }?.let {
-                viewParent.removeViewInLayout(it)
-            }
-
-            addSet.add(viewType)
-        }
-    }
-
-    private fun inflate(@LayoutRes layoutResource: Int, @ViewType viewType: Int): View {
+    private fun inflate(@LayoutRes layoutResource: Int): View {
         val viewParent = parent
         return if (viewParent is ViewGroup) {
             if (layoutResource != 0) {
                 val factory: LayoutInflater = inflater ?: LayoutInflater.from(context)
                 val view = factory.inflate(layoutResource, viewParent, false)
-                addToParent(viewType, viewParent, view)
+                addToParent(layoutResource, viewParent, view)
             } else {
                 throw IllegalArgumentException("StateView must have a valid layoutResource")
             }
@@ -257,9 +203,11 @@ class StateView : View {
         }
     }
 
-    private fun addToParent(@ViewType viewType: Int, viewParent: ViewGroup, view: View): View {
-        addSet.remove(viewType)
-
+    private fun addToParent(
+        @LayoutRes layoutResource: Int,
+        viewParent: ViewGroup,
+        view: View
+    ): View {
         val index = viewParent.indexOfChild(this)
         // 防止还能触摸底下的 View
         view.isClickable = true
@@ -288,22 +236,19 @@ class StateView : View {
         } else {
             viewParent.addView(view, index)
         }
-        if (loadingView != null && retryView != null && emptyView != null) {
-            viewParent.removeViewInLayout(this)
-        }
-        onInflateListener?.onInflate(viewType, view)
-        return view
-    }
-
-    private fun setupRetryClickListener() {
-        retryView?.setOnClickListener {
-            if (onRetryClickListener != null) {
-                showLoading()
-                retryView!!.postDelayed({
-                    onRetryClickListener?.onRetryClick()
-                }, 400)
+        if (layoutResource == retryResource) {
+            view.setOnClickListener {
+                onRetryClickListener?.let {
+                    showLoading()
+                    view.postDelayed({
+                        it.onRetryClick()
+                    }, 400)
+                }
             }
         }
+
+        onInflateListener?.onInflate(layoutResource, view)
+        return view
     }
 
     /**
@@ -323,17 +268,14 @@ class StateView : View {
      */
     interface OnInflateListener {
         /**
+         * @param layoutResource Equivalent viewType, the [view] of key
          * @param view The inflated View.
          */
-        fun onInflate(@ViewType viewType: Int, view: View?)
+        fun onInflate(@LayoutRes layoutResource: Int, view: View)
     }
 
     companion object {
-        const val EMPTY = 0x00000000
-        const val RETRY = 0x00000001
-        const val LOADING = 0x00000002
-
-        internal val TAG = StateView::class.java.simpleName
+        internal const val TAG = "StateView"
 
         @JvmStatic
         fun inject(activity: Activity): StateView {
@@ -351,8 +293,9 @@ class StateView : View {
         @JvmStatic
         fun inject(viewGroup: ViewGroup): StateView {
             if (viewGroup is LinearLayout || viewGroup is ScrollView || viewGroup is AdapterView<*> ||
-                    (viewGroup is ScrollingView && viewGroup is NestedScrollingChild) ||
-                    (viewGroup is NestedScrollingParent && viewGroup is NestedScrollingChild)) {
+                (viewGroup is ScrollingView && viewGroup is NestedScrollingChild) ||
+                (viewGroup is NestedScrollingParent && viewGroup is NestedScrollingChild)
+            ) {
                 return if (viewGroup.parent is ViewGroup) {
                     wrap(viewGroup)
                 } else {
@@ -362,7 +305,11 @@ class StateView : View {
 
             // match the viewGroup
             val stateView = StateView(viewGroup.context)
-            viewGroup.addView(stateView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+            viewGroup.addView(
+                stateView,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
             return stateView
         }
 
@@ -381,9 +328,17 @@ class StateView : View {
                 parent.removeView(view)
                 val wrap = FrameLayout(view.context)
                 parent.addView(wrap, view.layoutParams)
-                wrap.addView(view, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+                wrap.addView(
+                    view,
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT
+                )
                 val stateView = StateView(view.context)
-                wrap.addView(stateView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+                wrap.addView(
+                    stateView,
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT
+                )
                 Injector.setStateListAnimator(stateView, view)
                 return stateView
             }

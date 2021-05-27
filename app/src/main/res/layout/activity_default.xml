@@ -17,21 +17,21 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/InflateEmpty" />
+            android:text="@string/show_empty" />
 
         <Button
             android:id="@+id/btnInRetry"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/InflateRetry" />
+            android:text="@string/show_retry" />
 
         <Button
             android:id="@+id/btnRemove"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/ShowContent" />
+            android:text="@string/show_content" />
     </LinearLayout>
 
     <TextView

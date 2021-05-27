@@ -1,15 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/show_empty"
-        android:title="@string/InflateEmpty" />
+    <item
+        android:id="@+id/show_empty"
+        android:title="@string/show_empty" />
 
-    <item android:id="@+id/show_retry"
-        android:title="@string/InflateRetry" />
+    <item
+        android:id="@+id/show_retry"
+        android:title="@string/show_retry" />
 
-    <item android:id="@+id/show_loading"
-        android:title="@string/InflateLoading" />
+    <item
+        android:id="@+id/show_loading"
+        android:title="@string/show_loading" />
 
-    <item android:id="@+id/show_content"
-        android:title="@string/ShowContent"/>
+    <item
+        android:id="@+id/show_content"
+        android:title="@string/show_content" />
 
+    <item
+        android:id="@+id/show_custom"
+        android:title="@string/show_custom" />
 </menu>

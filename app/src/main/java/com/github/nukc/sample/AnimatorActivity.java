@@ -13,6 +13,8 @@ import com.github.nukc.stateview.animations.FadeScaleAnimatorProvider;
 import com.github.nukc.stateview.animations.FlipAnimatorProvider;
 import com.github.nukc.stateview.animations.SlideAnimatorProvider;
 
+import org.jetbrains.annotations.NotNull;
+
 public class AnimatorActivity extends AppCompatActivity {
 
     private StateView mStateView;
@@ -22,14 +24,14 @@ public class AnimatorActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_animator);
 
-        mStateView = (StateView) findViewById(R.id.stateView);
+        mStateView = findViewById(R.id.stateView);
         mStateView.setEmptyResource(R.layout.view_empty);
         setBtn();
 
         mStateView.setOnInflateListener(new StateView.OnInflateListener() {
             @Override
-            public void onInflate(@StateView.ViewType int viewType, View view) {
-                if (viewType == StateView.EMPTY) {
+            public void onInflate(int layoutResource, @NotNull View view) {
+                if (layoutResource == mStateView.getEmptyResource()) {
                     // set text or other
                     ViewGroup emptyView = (ViewGroup) view;
                     TextView tvMessage = emptyView.findViewById(R.id.tv_message);

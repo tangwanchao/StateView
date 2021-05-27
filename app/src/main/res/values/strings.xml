@@ -1,15 +1,16 @@
 <resources>
     <string name="app_name">StateView</string>
-    <string name="InflateEmpty">show empty</string>
-    <string name="InflateRetry">show retry</string>
-    <string name="InflateLoading">show loading</string>
-    <string name="ShowContent">show content</string>
+    <string name="show_empty">show empty</string>
+    <string name="show_retry">show retry</string>
+    <string name="show_loading">show loading</string>
+    <string name="show_content">show content</string>
+    <string name="show_custom">show custom</string>
     <string name="title_activity_drawer_layout">DrawerLayoutActivity</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
-
+    <string name="text_retry_31">Something went wrong!\n\nTap to retry 31</string>
 </resources>
 
