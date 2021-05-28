@@ -1,7 +1,7 @@
 # StateView
 
 [![Build Status](https://travis-ci.org/nukc/StateView.svg?branch=master)](https://travis-ci.org/nukc/StateView)
-[![Download](https://api.bintray.com/packages/nukc/maven/StateView-Kt/images/download.svg) ](https://bintray.com/nukc/maven/StateView-Kt/_latestVersion)
+[![](https://jitpack.io/v/nukc/StateView.svg)](https://jitpack.io/#nukc/StateView)
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-StateView-green.svg?style=true)](https://android-arsenal.com/details/1/4255)
 
 [English](https://github.com/nukc/StateView/blob/master/README-en.md)
@@ -11,7 +11,26 @@ StateView 一个轻量级的控件, 继承自 `View`, 吸收了 `ViewStub` 的�
 
 <img src="https://raw.githubusercontent.com/nukc/stateview/master/art/custom.gif"><img width="200"><img src="https://raw.githubusercontent.com/nukc/stateview/master/art/animations.gif">
 
+> JitPack
 
+Step 1. Add the JitPack repository to your build file
+```groovy
+    allprojects {
+        repositories {
+            ...
+            maven { url 'https://jitpack.io' }
+        }
+    }
+```
+Step 2. Add the dependency
+```groovy
+	dependencies {
+	    implementation 'com.github.nukc:StateView:v3.0.0'
+	}
+```
+
+
+> JCenter: will no available after 2022-02-01
 ```groovy
    // andoridx, kotlin version, recommend
    implementation 'com.github.nukc.stateview:kotlin:2.2.0'
@@ -56,7 +75,7 @@ StateView 一个轻量级的控件, 继承自 `View`, 吸收了 `ViewStub` 的�
 - 显示空视图: ```mStateView.showEmpty();```
 - 显示加载视图: ```mStateView.showLoading();```
 - 显示重试视图: ```mStateView.showRetry();```
-- 显示内容: ``` mStateView.showContent();```
+- 显示内容: ```mStateView.showContent();```
 
 设置重试点击事件:
 
@@ -88,6 +107,15 @@ StateView 一个轻量级的控件, 继承自 `View`, 吸收了 `ViewStub` 的�
     setEmptyView(View view)
     setRetryView(View view)
     setLoadingView(View view)
+
+    // v3.0.0
+    setView(viewType: Int, view: View)
+    // eg: set empty view
+    setView(mStateView.getEmptyResource(), emptyView)
+    // set any view
+    setView(1, view)
+    // show view
+    show(viewType: Int)
 ```
 
 利用 ```OnInflateListener``` 设置文本图像或者其它操作：
@@ -211,19 +239,19 @@ layoutParams.topMargin += getStatusBarHeight()
 ## License
 
     The MIT License (MIT)
-
+    
     Copyright (c) 2016 Nukc
-
+    
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
     in the Software without restriction, including without limitation the rights
     to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
     copies of the Software, and to permit persons to whom the Software is
     furnished to do so, subject to the following conditions:
-
+    
     The above copyright notice and this permission notice shall be included in all
     copies or substantial portions of the Software.
-
+    
     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
     IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
     FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
