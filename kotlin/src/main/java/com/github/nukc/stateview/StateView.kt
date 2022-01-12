@@ -19,6 +19,7 @@ import androidx.core.view.NestedScrollingChild
 import androidx.core.view.NestedScrollingParent
 import androidx.core.view.ScrollingView
 import androidx.core.view.ViewCompat
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 
 /**
  * StateView is an invisible, zero-sized View that can be used
@@ -340,6 +341,12 @@ class StateView @JvmOverloads constructor(
                     ViewGroup.LayoutParams.MATCH_PARENT
                 )
                 Injector.setStateListAnimator(stateView, view)
+
+                // special for SwipeRefreshLayout
+                if (Injector.swipeRefreshLayoutAvailable && parent is SwipeRefreshLayout) {
+                    Injector.injectIntoSwipeRefreshLayout(parent)
+                }
+
                 return stateView
             }
             throw ClassCastException("view.getParent() must be ViewGroup")

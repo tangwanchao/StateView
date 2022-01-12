@@ -109,5 +109,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="setEmptyView" />
+
+        <Button
+            android:id="@+id/btn_swipe_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="SwipeRefreshLayout + RecyclerView" />
+
     </LinearLayout>
 </ScrollView>

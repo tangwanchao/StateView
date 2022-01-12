@@ -12,6 +12,8 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.NestedScrollingChild
 import androidx.core.view.NestedScrollingParent
 import androidx.core.view.ScrollingView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import java.lang.Exception
 
 /**
  * @author Nukc.
@@ -21,6 +23,13 @@ internal object Injector {
     val constraintLayoutAvailable = try {
         null != Class.forName("androidx.constraintlayout.widget.ConstraintLayout")
     } catch (e: Throwable) {
+        false
+    }
+
+    val swipeRefreshLayoutAvailable = try {
+        Class.forName("androidx.swiperefreshlayout.widget.SwipeRefreshLayout") != null
+    }
+    catch (ignore: Throwable) {
         false
     }
 
@@ -137,6 +146,24 @@ internal object Injector {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && target is Button) {
             Log.i(StateView.TAG, "for normal display, stateView.stateListAnimator = view.stateListAnimator")
             stateView.stateListAnimator = target.stateListAnimator
+        }
+    }
+
+    /**
+     * fix bug: if someone injects SwipeRefreshLayout's child after SwipeRefreshLayout is resumed,
+     * this child will be hidden.
+     */
+    fun injectIntoSwipeRefreshLayout(layout: SwipeRefreshLayout) {
+        try {
+            val mTargetField = SwipeRefreshLayout::class.java.getDeclaredField("mTarget");
+            mTargetField.isAccessible = true
+            mTargetField.set(layout, null)
+
+            // we replace the mTarget field with 'null', then the SwipeRefreshLayout
+            // will look for it's real child again.
+        }
+        catch (e: Throwable) {
+            e.printStackTrace()
         }
     }
 }
