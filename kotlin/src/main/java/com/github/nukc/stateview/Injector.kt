@@ -13,7 +13,6 @@ import androidx.core.view.NestedScrollingChild
 import androidx.core.view.NestedScrollingParent
 import androidx.core.view.ScrollingView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import java.lang.Exception
 
 /**
  * @author Nukc.
@@ -28,8 +27,7 @@ internal object Injector {
 
     val swipeRefreshLayoutAvailable = try {
         Class.forName("androidx.swiperefreshlayout.widget.SwipeRefreshLayout") != null
-    }
-    catch (ignore: Throwable) {
+    } catch (e: Throwable) {
         false
     }
 
@@ -46,7 +44,8 @@ internal object Injector {
         // create a new FrameLayout to wrap StateView and parent's childView
         val wrapper = FrameLayout(parent.context)
         val layoutParams = ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
+        )
         wrapper.layoutParams = layoutParams
 
         if (parent is LinearLayout) {
@@ -75,8 +74,7 @@ internal object Injector {
             val metrics = DisplayMetrics()
             wm.defaultDisplay.getMetrics(metrics)
             screenHeight = metrics.heightPixels
-        } else if (parent is NestedScrollingParent &&
-                parent is NestedScrollingChild) {
+        } else if (parent is NestedScrollingParent && parent is NestedScrollingChild) {
             if (parent.childCount == 2) {
                 val targetView = parent.getChildAt(1)
                 parent.removeView(targetView)
@@ -144,7 +142,10 @@ internal object Injector {
      */
     fun setStateListAnimator(stateView: StateView, target: View) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && target is Button) {
-            Log.i(StateView.TAG, "for normal display, stateView.stateListAnimator = view.stateListAnimator")
+            Log.i(
+                StateView.TAG,
+                "for normal display, stateView.stateListAnimator = view.stateListAnimator"
+            )
             stateView.stateListAnimator = target.stateListAnimator
         }
     }
@@ -155,14 +156,13 @@ internal object Injector {
      */
     fun injectIntoSwipeRefreshLayout(layout: SwipeRefreshLayout) {
         try {
-            val mTargetField = SwipeRefreshLayout::class.java.getDeclaredField("mTarget");
+            val mTargetField = SwipeRefreshLayout::class.java.getDeclaredField("mTarget")
             mTargetField.isAccessible = true
             mTargetField.set(layout, null)
 
             // we replace the mTarget field with 'null', then the SwipeRefreshLayout
             // will look for it's real child again.
-        }
-        catch (e: Throwable) {
+        } catch (e: Throwable) {
             e.printStackTrace()
         }
     }
