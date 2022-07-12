@@ -225,11 +225,7 @@ open class StateView @JvmOverloads constructor(
                 viewParent.addView(view, index, lp)
             } else if (Injector.constraintLayoutAvailable && viewParent is ConstraintLayout) {
                 val source = layoutParams as ConstraintLayout.LayoutParams
-                val lp = ConstraintLayout.LayoutParams(layoutParams as ViewGroup.LayoutParams)
-                lp.leftToLeft = source.leftToLeft
-                lp.rightToRight = source.rightToRight
-                lp.topToTop = source.topToTop
-                lp.bottomToBottom = source.bottomToBottom
+                val lp = ConstraintLayout.LayoutParams(source)
                 viewParent.addView(view, index, lp)
             } else {
                 viewParent.addView(view, index, layoutParams)
