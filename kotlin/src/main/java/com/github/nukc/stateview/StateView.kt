@@ -8,6 +8,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.os.Build
 import android.util.AttributeSet
+import android.util.Log
 import android.util.SparseArray
 import android.view.LayoutInflater
 import android.view.View
@@ -225,7 +226,30 @@ open class StateView @JvmOverloads constructor(
                 viewParent.addView(view, index, lp)
             } else if (Injector.constraintLayoutAvailable && viewParent is ConstraintLayout) {
                 val source = layoutParams as ConstraintLayout.LayoutParams
-                val lp = ConstraintLayout.LayoutParams(source)
+                val lp = ConstraintLayout.LayoutParams(source as ViewGroup.LayoutParams)
+                lp.leftToLeft = source.leftToLeft
+                lp.leftToRight = source.leftToRight
+                lp.startToStart = source.startToStart
+                lp.startToEnd = source.startToEnd
+                lp.topToTop = source.topToTop
+                lp.topToBottom = source.topToBottom
+                lp.rightToRight = source.rightToRight
+                lp.rightToLeft = source.rightToLeft
+                lp.endToEnd = source.endToEnd
+                lp.endToStart = source.endToStart
+                lp.bottomToBottom = source.bottomToBottom
+                lp.bottomToTop = source.bottomToTop
+
+                lp.leftMargin = source.leftMargin
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                    lp.marginStart = source.marginStart
+                }
+                lp.topMargin = source.topMargin
+                lp.rightMargin = source.rightMargin
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                    lp.marginEnd = source.marginEnd
+                }
+                lp.bottomMargin = source.bottomMargin
                 viewParent.addView(view, index, lp)
             } else {
                 viewParent.addView(view, index, layoutParams)
